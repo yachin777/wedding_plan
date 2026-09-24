@@ -3,20 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<meta name="theme-color" content="#B32F37">
 <title>婚禮籌備</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
 <style>
+html{color-scheme:light}
+:root{padding-top:env(safe-area-inset-top,0px)}
+[hidden]{display:none!important}
 :root{
   --bg:#FAF7F6; --surface:#FFFFFF; --surface-2:#F4ECEA; --line:#E7DAD8;
   --ink:#2A1F23; --ink-2:#6E5C62; --ink-3:#9A8A8F;
   --red:#B32F37; --red-soft:#F7E1E1; --gold:#9C7A2E; --gold-soft:#F4EAD2;
   --ok:#2F7A55; --ok-soft:#DDEFE5; --warn:#A8620F; --warn-soft:#FAE9D2;
+  --est:#D9C3C5;
   --shadow:0 1px 2px rgba(60,20,30,.06),0 4px 16px rgba(60,20,30,.06);
   --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
   --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --tabbar:62px;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
@@ -25,6 +30,7 @@
     --ink:#F2E9EA; --ink-2:#C2B2B6; --ink-3:#8E7E83;
     --red:#E46A70; --red-soft:#3E2226; --gold:#D6B460; --gold-soft:#3A3020;
     --ok:#6CC596; --ok-soft:#1E3429; --warn:#E6A454; --warn-soft:#3A2B18;
+    --est:#5A4449;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
   }
 }
@@ -34,60 +40,99 @@
   --ink:#F2E9EA; --ink-2:#C2B2B6; --ink-3:#8E7E83;
   --red:#E46A70; --red-soft:#3E2226; --gold:#D6B460; --gold-soft:#3A3020;
   --ok:#6CC596; --ok-soft:#1E3429; --warn:#E6A454; --warn-soft:#3A2B18;
+  --est:#5A4449;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
 }
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
+a{color:var(--red)}
 :focus-visible{outline:2px solid var(--red);outline-offset:2px}
 .num{font-variant-numeric:tabular-nums}
-.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:0 120px}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:0 calc(var(--tabbar) + 96px + env(safe-area-inset-bottom,0px))}
 
 /* header */
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 10px;border-bottom:1px solid var(--line);margin-inline:-16px;padding-inline:16px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px 10px;border-bottom:1px solid var(--line);margin-inline:-16px;padding-inline:16px}
 .brand{display:flex;align-items:center;gap:12px}
 .seal{flex:none;width:40px;height:40px;border-radius:8px;background:var(--red);color:#fff;display:grid;place-items:center;font-family:var(--serif);font-weight:700;font-size:22px;line-height:1}
-.brand h1{margin:0;font-family:var(--serif);font-size:21px;font-weight:700;letter-spacing:.04em}
-.brand p{margin:0;color:var(--ink-2);font-size:13px}
-.overall{margin-left:auto;text-align:right;font-size:12px;color:var(--ink-2)}
-.overall b{display:block;font-size:18px;color:var(--ink);font-weight:700}
+.brand h1{margin:0;font-family:var(--serif);font-size:20px;font-weight:700;letter-spacing:.04em;line-height:1.2}
+.brand p{margin:0;color:var(--ink-2);font-size:12.5px}
+.icon-btn{margin-left:auto;flex:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--ink-2)}
+.icon-btn svg{width:20px;height:20px}
+.view-h{display:flex;align-items:baseline;gap:8px;margin:18px 0 0;flex-wrap:wrap}
+.view-h h2{margin:0;font-family:var(--serif);font-size:22px}
+.view-h span{color:var(--ink-3);font-size:13px}
+.sec-h{font-size:12.5px;color:var(--ink-2);font-weight:700;letter-spacing:.06em;margin:22px 0 8px;display:flex;align-items:center;gap:8px}
+.sec-h button.link{margin-left:auto;font-weight:500;font-size:13px;letter-spacing:0;border:0;background:none;color:var(--red);padding:0}
 
-/* stage tabs */
+/* tab bar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabbar-in{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));height:var(--tabbar)}
+.tab{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--ink-3);font-size:11px;padding:0;min-width:0}
+.tab svg{width:22px;height:22px}
+.tab[aria-current="page"]{color:var(--red);font-weight:700}
+
+/* generic */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0;text-align:left}
+.kpi span{display:block;font-size:12px;color:var(--ink-2)}
+.kpi b{font-size:18px;font-weight:700;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kpi.alert b{color:var(--red)}
+.kpi.good b{color:var(--ok)}
+@media (max-width:480px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.bar{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--red);border-radius:3px;transition:width .4s ease}
+.empty{text-align:center;color:var(--ink-3);padding:32px 12px;border:1px dashed var(--line);border-radius:12px;font-size:14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--ink-2)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.chips select{margin-left:auto;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:5px 8px;font-size:13px;max-width:45%}
+.seg-bar{display:grid;grid-template-columns:1fr 1fr;background:var(--surface-2);border-radius:10px;padding:3px;margin-top:14px}
+.seg-bar button{border:0;background:none;border-radius:8px;padding:7px;font-weight:500;color:var(--ink-2)}
+.seg-bar button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow);font-weight:700}
+.list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.group-h{font-size:12px;color:var(--ink-3);letter-spacing:.08em;margin-top:8px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 16px;font-weight:500}
+.btn.primary{background:var(--red);border-color:var(--red);color:#fff;font-weight:700}
+
+/* overview */
+.hero{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;margin-top:16px;background:var(--red);color:#fff;border-radius:14px;padding:18px}
+.hero small{display:block;font-size:13px;opacity:.85}
+.hero .days{font-family:var(--serif);font-size:44px;font-weight:700;line-height:1.05}
+.hero .days em{font-style:normal;font-size:16px;margin-left:4px}
+.hero .date{font-size:13px;opacity:.9}
+.hero .ring{width:84px;height:84px}
+.hero.unset{background:var(--surface);color:var(--ink);border:1px dashed var(--line)}
+.stage-rows{display:flex;flex-direction:column;gap:6px}
+.srow{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:left}
+.srow .n{font-family:var(--serif);font-weight:700;font-size:16px}
+.srow .m{font-size:12px;color:var(--ink-2);white-space:nowrap}
+.rows{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.row{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:0;border-top:1px solid var(--line);background:none;text-align:left;width:100%}
+.row:first-child{border-top:0}
+.row .d{font-size:13px;font-weight:700;color:var(--ink-2)}
+.row .t{min-width:0}
+.row .t b{display:block;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .t small{color:var(--ink-3);font-size:12px}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* tasks */
 .stages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
-.stage{position:relative;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 10px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.stage{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 10px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
 .stage[aria-selected="true"]{border-color:var(--red);box-shadow:0 0 0 1px var(--red) inset}
 .stage .step{font-size:11px;color:var(--ink-3);letter-spacing:.08em}
 .stage .name{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1.1}
 .stage[aria-selected="true"] .name{color:var(--red)}
 .stage .pct{font-size:22px;font-weight:700;line-height:1}
 .stage .pct small{font-size:12px;font-weight:500;color:var(--ink-2);margin-left:1px}
-.bar{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden}
-.bar i{display:block;height:100%;background:var(--red);border-radius:3px;transition:width .4s ease}
 .stage .meta{display:flex;flex-wrap:wrap;gap:4px 8px;font-size:12px;color:var(--ink-2)}
 .od{color:var(--red);font-weight:700}
 .od.zero{color:var(--ink-3);font-weight:400}
-
-/* stage detail */
-.detail{margin-top:18px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
-.kpi span{display:block;font-size:12px;color:var(--ink-2)}
-.kpi b{font-size:18px;font-weight:700;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.kpi.alert b{color:var(--red)}
-@media (max-width:480px){.detail{grid-template-columns:repeat(2,minmax(0,1fr))}}
-
-.toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px;align-items:center}
-.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--ink-2)}
-.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
-.toolbar select{margin-left:auto;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:5px 8px;font-size:13px;max-width:45%}
-
-.banner{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--gold-soft);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:13px}
+.banner{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--gold-soft);border-radius:10px;padding:10px 12px;font-size:13px}
 .banner button{margin-left:auto;border:1px solid var(--gold);background:transparent;color:var(--gold);border-radius:8px;padding:4px 10px;font-size:13px;font-weight:500}
-
-/* list */
-.list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
-.group-h{font-size:12px;color:var(--ink-3);letter-spacing:.08em;margin-top:8px}
-.task{display:grid;grid-template-columns:auto 1fr;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;position:relative}
+.task{display:grid;grid-template-columns:auto 1fr;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
 .task.overdue{border-color:color-mix(in srgb,var(--red) 45%,var(--line))}
 .task.done{opacity:.62}
 .task.done .t-title{text-decoration:line-through;text-decoration-color:var(--ink-3)}
@@ -108,12 +153,78 @@ button{cursor:pointer}
 .tag.u0{background:var(--red);color:#fff}
 .tag.u1{background:var(--red-soft);color:var(--red)}
 .tag.p0{border:1px solid var(--red);color:var(--red);background:transparent}
+.tag.st-ok{background:var(--ok-soft);color:var(--ok)}
+.tag.st-wait{background:var(--warn-soft);color:var(--warn)}
+.tag.st-no{background:var(--surface-2);color:var(--ink-3)}
 .facts{display:flex;flex-wrap:wrap;gap:2px 14px;font-size:12.5px;color:var(--ink-2)}
 .facts span{white-space:nowrap}
 .note{font-size:12.5px;color:var(--ink-3);overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.empty{text-align:center;color:var(--ink-3);padding:40px 12px;border:1px dashed var(--line);border-radius:12px;font-size:14px}
 
-.fab{position:fixed;right:max(16px,calc(50vw - 344px));bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:6;border:0;background:var(--red);color:#fff;border-radius:999px;padding:13px 20px 13px 16px;font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px;box-shadow:0 6px 20px color-mix(in srgb,var(--red) 40%,transparent)}
+/* calendar */
+.cal-h{display:flex;align-items:center;gap:8px;margin-top:14px}
+.cal-h b{font-family:var(--serif);font-size:18px;flex:1;text-align:center}
+.cal-h button{border:1px solid var(--line);background:var(--surface);border-radius:8px;min-width:38px;height:36px;padding:0 10px}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:10px}
+.cal .wd{text-align:center;font-size:12px;color:var(--ink-3);padding-bottom:2px}
+.cal .wd.sun{color:var(--red)}
+.day{aspect-ratio:1/1.05;max-width:100%;border:1px solid var(--line);background:var(--surface);border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:5px 0 0;gap:3px;min-width:0;position:relative}
+.day.blank{visibility:hidden}
+.day .dn{font-size:14px;line-height:1.3}
+.day.today .dn{background:var(--ink);color:var(--bg);border-radius:999px;padding:0 6px;font-weight:700}
+.day[aria-pressed="true"]{border-color:var(--red);box-shadow:0 0 0 1px var(--red) inset}
+.day.wedding{background:var(--red-soft)}
+.day .xi{position:absolute;right:3px;top:1px;font-family:var(--serif);font-size:10px;color:var(--red);font-weight:700}
+.dots{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;padding-inline:2px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--red);display:inline-block}
+.dot.due{background:var(--gold)}
+.dot.done{background:var(--ink-3)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.lab{font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;background:var(--red-soft);color:var(--red);margin-right:6px;vertical-align:2px}
+.lab.due{background:var(--gold-soft);color:var(--gold)}
+
+/* vendors / articles */
+.vcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;cursor:pointer}
+.vcard.muted{opacity:.6}
+.vtop{display:flex;gap:8px;align-items:flex-start}
+.vtop b{flex:1;min-width:0;font-size:15.5px;overflow-wrap:anywhere}
+.contact{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px}
+.contact a{text-decoration:none;font-weight:500}
+.guide details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 14px}
+.guide details+details{margin-top:8px}
+.guide summary{list-style:none;cursor:pointer;padding:13px 0;font-family:var(--serif);font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary::after{content:"+";margin-left:auto;color:var(--ink-3);font-family:var(--sans);font-weight:400;font-size:20px}
+.guide details[open] summary::after{content:"−"}
+.guide summary small{font-family:var(--sans);font-weight:400;color:var(--ink-3);font-size:12px}
+.guide .body{padding-bottom:14px;font-size:14px;max-width:65ch}
+.guide ol,.guide ul{margin:6px 0;padding-left:1.3em}
+.guide li{margin:3px 0}
+.guide p{margin:6px 0}
+.hint{font-size:12.5px;color:var(--ink-3);margin-top:10px}
+
+/* budget */
+.meter{position:relative;height:14px;border-radius:7px;background:var(--surface-2);margin-top:4px}
+.meter i{position:absolute;left:0;top:0;bottom:0;border-radius:7px}
+.meter .e{background:var(--est)}
+.meter .a{background:var(--red);border-right:2px solid var(--surface)}
+.meter .cap{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);border-radius:1px}
+.mlab{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin-top:8px;gap:8px;flex-wrap:wrap}
+.warnline{margin-top:8px;font-size:13px;color:var(--red);font-weight:500}
+.brows{display:flex;flex-direction:column;gap:12px}
+.brow{display:grid;grid-template-columns:72px 1fr;gap:10px;align-items:center}
+.brow .l{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brow .bars{display:flex;flex-direction:column;gap:2px}
+.brow .b{height:9px;border-radius:0 4px 4px 0;min-width:2px}
+.brow .b.e{background:var(--est)}
+.brow .b.a{background:var(--red)}
+.brow .v{font-size:12px;color:var(--ink-2);margin-top:2px}
+.key{display:flex;gap:14px;font-size:12px;color:var(--ink-2);margin-bottom:10px}
+.key span{display:inline-flex;align-items:center;gap:5px}
+.key i{width:10px;height:10px;border-radius:2px;display:inline-block}
+
+/* fab */
+.fab{position:fixed;right:max(16px,calc(50vw - 344px));bottom:calc(var(--tabbar) + 14px + env(safe-area-inset-bottom,0px));z-index:7;border:0;background:var(--red);color:#fff;border-radius:999px;padding:12px 18px 12px 14px;font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px;box-shadow:0 6px 20px color-mix(in srgb,var(--red) 40%,transparent)}
 .fab svg{width:20px;height:20px}
 
 /* sheet */
@@ -126,23 +237,22 @@ button{cursor:pointer}
 .sheet-b{overflow-y:auto;padding:14px 16px 8px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .f{display:flex;flex-direction:column;gap:4px;min-width:0}
 .f.full{grid-column:1/-1}
-.f label{font-size:12.5px;color:var(--ink-2);font-weight:500}
-.f label em{color:var(--red);font-style:normal}
+.f label,.f .lbl{font-size:12.5px;color:var(--ink-2);font-weight:500}
+.f em{color:var(--red);font-style:normal}
 .f input,.f select,.f textarea{width:100%;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:9px 10px;font-size:16px;min-height:42px}
 .f textarea{min-height:72px;resize:vertical}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .seg button{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:9px 4px;font-family:var(--serif);font-weight:700}
 .seg button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.chk{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:14px}
+.chk input{width:20px;height:20px;accent-color:var(--ok)}
 .err{grid-column:1/-1;color:var(--red);font-size:13px;margin:0}
 .sheet-f{display:flex;gap:8px;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
-.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 16px;font-weight:500}
-.btn.primary{background:var(--red);border-color:var(--red);color:#fff;font-weight:700;margin-left:auto;min-width:96px}
+.sheet-f .primary{margin-left:auto;min-width:96px}
 .btn.danger{color:var(--red);border-color:color-mix(in srgb,var(--red) 40%,var(--line))}
 .btn.danger.arm{background:var(--red);color:#fff}
-.done-row{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:14px}
-.done-row input{width:20px;height:20px;accent-color:var(--ok)}
 
-.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;z-index:30;max-width:calc(100vw - 32px)}
+.toast{position:fixed;left:50%;bottom:calc(var(--tabbar) + 76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;z-index:30;max-width:calc(100vw - 32px)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -150,53 +260,31 @@ button{cursor:pointer}
 <div class="wrap">
   <header class="top">
     <div class="brand">
-      <div class="seal" aria-hidden="true">囍</div>
+      <div class="seal" aria-hidden="true">哈</div>
       <div>
         <h1>婚禮籌備</h1>
-        <p>提親 → 訂婚 → 婚禮</p>
+        <p id="subline">提親 → 訂婚 → 婚禮</p>
       </div>
-      <div class="overall num" id="overall"><b>0%</b>整體進度</div>
+      <button class="icon-btn" type="button" data-action="settings" aria-label="婚禮設定">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      </button>
     </div>
-    <div class="stages" role="tablist" id="stages"></div>
   </header>
-
-  <section class="detail num" id="detail"></section>
-  <div id="bannerSlot"></div>
-  <div class="toolbar" id="toolbar">
-    <button class="chip" data-f="all">全部</button>
-    <button class="chip" data-f="open">待辦</button>
-    <button class="chip" data-f="overdue">逾期</button>
-    <button class="chip" data-f="done">已完成</button>
-    <select id="catFilter" aria-label="依類別篩選"></select>
-  </div>
-  <main class="list" id="list"><div class="empty">載入中…</div></main>
+  <main id="view"><div class="empty" style="margin-top:16px">載入中…</div></main>
 </div>
 
-<button class="fab" id="addBtn" type="button">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>新增項目
+<button class="fab" id="fab" type="button">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span id="fabLabel">新增項目</span>
 </button>
+
+<nav class="tabbar" aria-label="主要功能">
+  <div class="tabbar-in" id="tabbar"></div>
+</nav>
 
 <div class="scrim" id="scrim" hidden>
   <form class="sheet" id="form" novalidate>
-    <div class="sheet-h"><h2 id="formTitle">新增項目</h2><button type="button" class="x" id="closeBtn" aria-label="關閉">×</button></div>
-    <div class="sheet-b">
-      <div class="f full"><label>階段 <em>*</em></label><div class="seg" id="fStage"></div></div>
-      <div class="f full"><label for="fItem">項目 <em>*</em></label><input id="fItem" maxlength="80" placeholder="例如：預訂訂婚喜餅" autocomplete="off"></div>
-      <div class="f"><label for="fCat">類別</label><select id="fCat"></select></div>
-      <div class="f"><label for="fOwner">負責處理人</label><select id="fOwner"></select></div>
-      <div class="f" id="fCatNewWrap" hidden><label for="fCatNew">新類別名稱</label><input id="fCatNew" maxlength="12"></div>
-      <div class="f" id="fOwnerNewWrap" hidden><label for="fOwnerNew">新負責人名稱</label><input id="fOwnerNew" maxlength="12"></div>
-      <div class="f"><label for="fDate">活動日期</label><input type="date" id="fDate"></div>
-      <div class="f"><label for="fDue">最後期限</label><input type="date" id="fDue"></div>
-      <div class="f"><label for="fStart">開始時間</label><input type="time" id="fStart"></div>
-      <div class="f"><label for="fEnd">結束時間</label><input type="time" id="fEnd"></div>
-      <div class="f"><label for="fUrg">急迫性</label><select id="fUrg"></select></div>
-      <div class="f"><label for="fPri">優先等級</label><select id="fPri"></select></div>
-      <div class="f full"><label for="fCost">預估成本（新台幣）</label><input type="number" id="fCost" inputmode="numeric" min="0" step="100" placeholder="0"></div>
-      <div class="f full"><label for="fNote">備註</label><textarea id="fNote" maxlength="500" placeholder="廠商聯絡方式、注意事項…"></textarea></div>
-      <label class="done-row" id="doneRow"><input type="checkbox" id="fDone"> 已完成</label>
-      <p class="err" id="fErr" hidden></p>
-    </div>
+    <div class="sheet-h"><h2 id="formTitle">新增</h2><button type="button" class="x" id="closeBtn" aria-label="關閉">×</button></div>
+    <div class="sheet-b" id="formBody"></div>
     <div class="sheet-f">
       <button type="button" class="btn danger" id="delBtn" hidden>刪除</button>
       <button type="button" class="btn" id="cancelBtn">取消</button>
@@ -207,28 +295,56 @@ button{cursor:pointer}
 <div class="toast" id="toast" hidden></div>
 
 <script>
+/* ================= constants ================= */
 const STAGES=[{id:'proposal',name:'提親',step:'STEP 1'},{id:'engagement',name:'訂婚',step:'STEP 2'},{id:'wedding',name:'婚禮',step:'STEP 3'}];
 const URGENCY=['非常緊急','緊急','一般','不急'];
 const PRIORITY=['高','中','低'];
+const VENDOR_STATUS=['詢價中','已簽約','不考慮'];
+const ARTICLE_CATS=['禮俗','喜餅禮品','婚紗攝影','婚宴場地','新秘造型','預算省錢','其他'];
 const DEFAULT_OPTS={
   categories:['禮俗儀式','場地餐飲','服裝造型','攝影錄影','喜餅禮品','金飾婚戒','賓客喜帖','交通住宿','佈置婚顧','其他'],
   people:['新郎','新娘','新人一起','男方家長','女方家長','媒人','婚顧']
 };
+const DEFAULT_SETTINGS={weddingDate:'',budget:0,groom:'',bride:''};
 const NEW='__new__';
-const state={tasks:[],opts:structuredClone(DEFAULT_OPTS),stage:'proposal',filter:'all',cat:'',ready:false};
+const I=p=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const VIEWS=[
+  {id:'overview',name:'總覽',icon:I('<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>')},
+  {id:'calendar',name:'月曆',icon:I('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>')},
+  {id:'tasks',name:'任務',icon:I('<path d="M10 6h10M10 12h10M10 18h10"/><path d="M3.5 6l1.5 1.5L7.5 5M3.5 12l1.5 1.5L7.5 11M3.5 18l1.5 1.5L7.5 17"/>')},
+  {id:'vendors',name:'廠商',icon:I('<path d="M4 9l1.2-5h13.6L20 9M4 9v11h16V9M4 9h16M9.5 20v-6h5v6"/>')},
+  {id:'articles',name:'文章',icon:I('<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19M9 7.5h6M9 11h6"/>')},
+  {id:'budget',name:'預算',icon:I('<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10.5h18M15.5 15h2.5M7 3.5h10"/>')}
+];
+
+/* ================= state & helpers ================= */
+const state={tasks:[],vendors:[],articles:[],opts:structuredClone(DEFAULT_OPTS),settings:{...DEFAULT_SETTINGS},
+  view:'overview',stage:'proposal',filter:'all',cat:'',vfilter:'all',aseg:'guide',calMonth:'',calDay:'',ready:false};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
-const todayStr=()=>{const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`};
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayStr=()=>ymd(new Date());
+const addDays=(s,n)=>{const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return ymd(d)};
 const dayDiff=(a,b)=>Math.round((Date.parse(a+'T00:00:00')-Date.parse(b+'T00:00:00'))/864e5);
 const money=n=>'NT$'+Math.round(n||0).toLocaleString('zh-TW');
-const fmtDate=s=>{if(!s)return'';const[y,m,d]=s.split('-');const w='日一二三四五六'[new Date(s+'T00:00:00').getDay()];return `${+m}/${+d}（${w}）`};
+const WD='日一二三四五六';
+const fmtDate=s=>{if(!s)return'';const[,m,d]=s.split('-');return `${+m}/${+d}（${WD[new Date(s+'T00:00:00').getDay()]}）`};
+const fmtShort=s=>{if(!s)return'';const[,m,d]=s.split('-');return `${+m}/${+d}`};
 const isOverdue=t=>!t.done&&t.due&&t.due<todayStr();
+const stageName=id=>STAGES.find(s=>s.id===id)?.name||'';
+const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'';
+const host=u=>{try{return new URL(u).hostname.replace(/^www\./,'')}catch{return''}};
 
-try{const s=localStorage.getItem('wp-stage');if(STAGES.some(x=>x.id===s))state.stage=s}catch{}
-if(STAGES.some(x=>x.id===location.hash.slice(1)))state.stage=location.hash.slice(1);
+try{const v=localStorage.getItem('wp-view');if(VIEWS.some(x=>x.id===v))state.view=v;
+  const s=localStorage.getItem('wp-stage');if(STAGES.some(x=>x.id===s))state.stage=s}catch{}
+const hv=location.hash.slice(1);
+if(VIEWS.some(x=>x.id===hv))state.view=hv;
+state.calMonth=todayStr().slice(0,7);state.calDay=todayStr();
+function remember(){try{localStorage.setItem('wp-view',state.view);localStorage.setItem('wp-stage',state.stage)}catch{}}
 
-/* ---------- storage: shared db, falling back to this browser ---------- */
+/* ================= storage: shared db when available, otherwise this browser ================= */
+const COLS=['tasks','vendors','articles'];
 const store={
   db:null,
   async init(){
@@ -236,99 +352,53 @@ const store={
     try{ if(window.claude?.use) db=await window.claude.use('db'); }catch{}
     if(db){
       this.db=db;
-      db.collection('tasks').onSnapshot(snap=>{
-        state.tasks=snap.docs.map(d=>({id:d.id,...d.data()}));
-        state.ready=true;render();
-      },()=>toast('與資料庫的連線中斷，請重新整理頁面'));
+      const pending=new Set(COLS);
+      for(const c of COLS){
+        db.collection(c).onSnapshot(snap=>{
+          state[c]=snap.docs.map(d=>({id:d.id,...d.data()}));
+          pending.delete(c);if(!pending.size)state.ready=true;render();
+        },()=>toast('與資料庫的連線中斷，請重新整理頁面'));
+      }
       db.doc('meta/options').onSnapshot(s=>{
         const d=s.exists?s.data():null;
         if(d){state.opts={categories:d.categories?.length?[...d.categories]:[...DEFAULT_OPTS.categories],people:d.people?.length?[...d.people]:[...DEFAULT_OPTS.people]};render()}
       },()=>{});
+      db.doc('meta/settings').onSnapshot(s=>{if(s.exists){state.settings={...DEFAULT_SETTINGS,...s.data()};render()}},()=>{});
     }else{
-      try{const raw=JSON.parse(localStorage.getItem('wp-local')||'null');if(raw){state.tasks=raw.tasks||[];if(raw.opts)state.opts=raw.opts}}catch{}
+      try{const raw=JSON.parse(localStorage.getItem('wp-local')||'null');
+        if(raw){for(const c of COLS)state[c]=raw[c]||[];if(raw.opts)state.opts=raw.opts;if(raw.settings)state.settings={...DEFAULT_SETTINGS,...raw.settings}}}catch{}
       state.ready=true;render();
-      toast('目前資料只存在這個瀏覽器');
     }
   },
-  newId(){return this.db?this.db.collection('tasks').doc().id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)},
-  persistLocal(){try{localStorage.setItem('wp-local',JSON.stringify({tasks:state.tasks,opts:state.opts}))}catch{}},
-  async save(task){
-    const {id,...body}=task;
-    if(this.db){await this.db.collection('tasks').doc(id).set(body);return}
-    const i=state.tasks.findIndex(t=>t.id===id);
-    if(i>=0)state.tasks[i]=task;else state.tasks.push(task);
+  newId(c){return this.db?this.db.collection(c).doc().id:c[0]+Date.now().toString(36)+Math.random().toString(36).slice(2,6)},
+  persistLocal(){try{localStorage.setItem('wp-local',JSON.stringify({tasks:state.tasks,vendors:state.vendors,articles:state.articles,opts:state.opts,settings:state.settings}))}catch{toast('這個瀏覽器無法儲存資料')}},
+  async save(c,item){
+    const {id,...body}=item;
+    if(this.db){await this.db.collection(c).doc(id).set(body);return}
+    const list=state[c],i=list.findIndex(t=>t.id===id);
+    if(i>=0)list[i]=item;else list.push(item);
     this.persistLocal();render();
   },
-  async remove(id){
-    if(this.db){await this.db.collection('tasks').doc(id).delete();return}
-    state.tasks=state.tasks.filter(t=>t.id!==id);this.persistLocal();render();
+  async remove(c,id){
+    if(this.db){await this.db.collection(c).doc(id).delete();return}
+    state[c]=state[c].filter(t=>t.id!==id);this.persistLocal();render();
   },
-  async saveOpts(){
-    if(this.db){await this.db.doc('meta/options').set({categories:state.opts.categories,people:state.opts.people});return}
-    this.persistLocal();
+  async saveMeta(name){
+    const body=name==='options'?{categories:state.opts.categories,people:state.opts.people}:{...state.settings};
+    if(this.db){await this.db.doc('meta/'+name).set(body);return}
+    this.persistLocal();render();
   }
 };
 
-/* ---------- stats ---------- */
+/* ================= stats ================= */
 function stats(list){
   const total=list.length,done=list.filter(t=>t.done).length,overdue=list.filter(isOverdue).length;
-  const cost=list.reduce((s,t)=>s+(+t.cost||0),0);
+  const cost=list.reduce((s,t)=>s+(+t.cost||0),0),actual=list.reduce((s,t)=>s+(+t.actual||0),0);
   const next=list.filter(t=>!t.done&&t.due&&t.due>=todayStr()).sort((a,b)=>a.due.localeCompare(b.due))[0];
-  return{total,done,overdue,cost,pct:total?Math.round(done/total*100):0,next};
+  return{total,done,overdue,cost,actual,pct:total?Math.round(done/total*100):0,next};
 }
 
-/* ---------- render ---------- */
-function render(){
-  const all=stats(state.tasks);
-  $('overall').innerHTML=`<b>${all.pct}%</b>整體 ${all.done}/${all.total}`;
-
-  $('stages').innerHTML=STAGES.map(s=>{
-    const st=stats(state.tasks.filter(t=>t.stage===s.id));
-    return `<button class="stage num" role="tab" data-stage="${s.id}" aria-selected="${s.id===state.stage}">
-      <span class="step">${s.step}</span><span class="name">${s.name}</span>
-      <span class="pct">${st.pct}<small>%</small></span>
-      <span class="bar"><i style="width:${st.pct}%"></i></span>
-      <span class="meta"><span>完成 ${st.done}/${st.total}</span><span class="od ${st.overdue?'':'zero'}">逾期 ${st.overdue}</span></span>
-    </button>`}).join('');
-
-  const cur=state.tasks.filter(t=>t.stage===state.stage);
-  const st=stats(cur);
-  $('detail').innerHTML=`
-    <div class="kpi"><span>完成 / 總數</span><b>${st.done} / ${st.total}</b></div>
-    <div class="kpi ${st.overdue?'alert':''}"><span>逾期</span><b>${st.overdue} 項</b></div>
-    <div class="kpi"><span>預估成本</span><b>${money(st.cost)}</b></div>
-    <div class="kpi"><span>下一個期限</span><b>${st.next?fmtDate(st.next.due):'—'}</b></div>`;
-
-  const samples=state.tasks.filter(t=>t.sample).length;
-  $('bannerSlot').innerHTML=samples?`<div class="banner"><span>目前有 ${samples} 筆範例資料，可以直接修改，或一次清除。</span><button type="button" id="clearSamples">清除範例</button></div>`:'';
-
-  document.querySelectorAll('#toolbar .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.f===state.filter));
-  const cats=[...new Set(cur.map(t=>t.category).filter(Boolean))];
-  if(state.cat&&!cats.includes(state.cat))state.cat='';
-  $('catFilter').innerHTML=`<option value="">所有類別</option>`+cats.map(c=>`<option ${c===state.cat?'selected':''}>${esc(c)}</option>`).join('');
-
-  if(!state.ready){$('list').innerHTML='<div class="empty">載入中…</div>';return}
-  let list=cur.filter(t=>!state.cat||t.category===state.cat);
-  if(state.filter==='open')list=list.filter(t=>!t.done);
-  if(state.filter==='overdue')list=list.filter(isOverdue);
-  if(state.filter==='done')list=list.filter(t=>t.done);
-  const key=t=>t.due||t.date||'9999';
-  const pr=t=>PRIORITY.indexOf(t.priority);
-  list.sort((a,b)=>(a.done-b.done)||key(a).localeCompare(key(b))||(pr(a)-pr(b)));
-
-  if(!list.length){
-    const name=STAGES.find(s=>s.id===state.stage).name;
-    $('list').innerHTML=`<div class="empty">${cur.length?'這個篩選條件下沒有項目':`「${name}」還沒有任何項目<br>點右下角「新增項目」開始`}</div>`;
-    return;
-  }
-  let html='',shownDone=false;
-  for(const t of list){
-    if(t.done&&!shownDone&&state.filter==='all'&&list.some(x=>!x.done)){html+='<div class="group-h">已完成</div>';shownDone=true}
-    html+=card(t);
-  }
-  $('list').innerHTML=html;
-}
-
+/* ================= shared pieces ================= */
 function dueBadge(t){
   if(t.done)return `<span class="due ok">已完成</span>`;
   if(!t.due)return '';
@@ -337,22 +407,24 @@ function dueBadge(t){
   if(d===0)return `<span class="due late">今天到期</span>`;
   return `<span class="due ${d<=7?'soon':''} num">剩 ${d} 天</span>`;
 }
-function card(t){
+function card(t,label){
   const u=URGENCY.indexOf(t.urgency);
   const time=t.start?`${t.start}${t.end?'–'+t.end:''}`:'';
   const facts=[
     t.date?`<span>活動 ${fmtDate(t.date)}${time?' '+time:''}</span>`:(time?`<span>${time}</span>`:''),
     t.due?`<span>期限 ${fmtDate(t.due)}</span>`:'',
     t.owner?`<span>負責：${esc(t.owner)}</span>`:'',
-    t.cost?`<span>${money(t.cost)}</span>`:''
+    t.cost?`<span>預估 ${money(t.cost)}</span>`:'',
+    t.actual?`<span>實付 ${money(t.actual)}</span>`:''
   ].join('');
   return `<article class="task ${t.done?'done':''} ${isOverdue(t)?'overdue':''}">
-    <button class="check" type="button" data-toggle="${t.id}" aria-label="${t.done?'標為未完成':'標為完成'}">
+    <button class="check" type="button" data-toggle="${esc(t.id)}" aria-label="${t.done?'標為未完成':'標為完成'}">
       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
     </button>
-    <button class="t-body" type="button" data-edit="${t.id}">
-      <span class="t-row"><span class="t-title">${esc(t.item)}</span>${dueBadge(t)}</span>
+    <button class="t-body" type="button" data-edit="tasks:${esc(t.id)}">
+      <span class="t-row"><span class="t-title">${label||''}${esc(t.item)}</span>${dueBadge(t)}</span>
       <span class="tags">
+        <span class="tag">${stageName(t.stage)}</span>
         ${t.category?`<span class="tag cat">${esc(t.category)}</span>`:''}
         ${t.urgency?`<span class="tag ${u===0?'u0':u===1?'u1':''}">${esc(t.urgency)}</span>`:''}
         ${t.priority?`<span class="tag ${t.priority==='高'?'p0':''}">優先 ${esc(t.priority)}</span>`:''}
@@ -362,101 +434,406 @@ function card(t){
     </button>
   </article>`;
 }
-
-/* ---------- form ---------- */
-let editing=null,formStage='proposal',delArmed=false;
-function fillSelect(el,items,val,withNew,newLabel){
-  const list=[...items];if(val&&!list.includes(val))list.push(val);
-  el.innerHTML=`<option value="">— 未指定 —</option>`+list.map(v=>`<option ${v===val?'selected':''}>${esc(v)}</option>`).join('')+(withNew?`<option value="${NEW}">＋ ${newLabel}</option>`:'');
+function rowItem(t,when){
+  return `<button class="row" type="button" data-edit="tasks:${esc(t.id)}">
+    <span class="d num">${fmtShort(when)}</span>
+    <span class="t"><b>${esc(t.item)}</b><small>${stageName(t.stage)}${t.owner?' · '+esc(t.owner):''}</small></span>
+    ${dueBadge(t)}</button>`;
 }
-function setStageSeg(){ $('fStage').innerHTML=STAGES.map(s=>`<button type="button" data-seg="${s.id}" aria-pressed="${s.id===formStage}">${s.name}</button>`).join('') }
-function openForm(task){
-  editing=task||null;delArmed=false;
-  const t=task||{stage:state.stage,urgency:'一般',priority:'中'};
-  formStage=t.stage;setStageSeg();
-  $('formTitle').textContent=task?'編輯項目':'新增項目';
-  $('fItem').value=t.item||'';
-  fillSelect($('fCat'),state.opts.categories,t.category||(state.cat||''),true,'新增類別');
-  fillSelect($('fOwner'),state.opts.people,t.owner||'',true,'新增負責人');
-  fillSelect($('fUrg'),URGENCY,t.urgency||'',false);
-  fillSelect($('fPri'),PRIORITY,t.priority||'',false);
-  $('fDate').value=t.date||'';$('fDue').value=t.due||'';
-  $('fStart').value=t.start||'';$('fEnd').value=t.end||'';
-  $('fCost').value=t.cost||'';$('fNote').value=t.note||'';
-  $('fDone').checked=!!t.done;$('doneRow').hidden=!task;
-  $('fCatNewWrap').hidden=$('fOwnerNewWrap').hidden=true;$('fCatNew').value=$('fOwnerNew').value='';
-  $('delBtn').hidden=!task;$('delBtn').textContent='刪除';$('delBtn').classList.remove('arm');
-  $('fErr').hidden=true;
-  $('scrim').hidden=false;document.body.style.overflow='hidden';
-  if(!task)setTimeout(()=>$('fItem').focus(),50);
-}
-function closeForm(){$('scrim').hidden=true;document.body.style.overflow='';editing=null}
-function showErr(m){$('fErr').textContent=m;$('fErr').hidden=false}
 
-$('fCat').onchange=e=>{$('fCatNewWrap').hidden=e.target.value!==NEW;if(e.target.value===NEW)$('fCatNew').focus()};
-$('fOwner').onchange=e=>{$('fOwnerNewWrap').hidden=e.target.value!==NEW;if(e.target.value===NEW)$('fOwnerNew').focus()};
-$('fStage').onclick=e=>{const b=e.target.closest('[data-seg]');if(b){formStage=b.dataset.seg;setStageSeg()}};
+/* ================= views ================= */
+const R={};
 
-$('form').onsubmit=async e=>{
-  e.preventDefault();
-  const item=$('fItem').value.trim();
-  if(!item){showErr('請輸入項目內容');$('fItem').focus();return}
-  let cat=$('fCat').value,owner=$('fOwner').value,optsChanged=false;
-  if(cat===NEW){cat=$('fCatNew').value.trim();if(!cat){showErr('請輸入新類別名稱');return}if(!state.opts.categories.includes(cat)){state.opts.categories.push(cat);optsChanged=true}}
-  if(owner===NEW){owner=$('fOwnerNew').value.trim();if(!owner){showErr('請輸入新負責人名稱');return}if(!state.opts.people.includes(owner)){state.opts.people.push(owner);optsChanged=true}}
-  const start=$('fStart').value,end=$('fEnd').value;
-  if(start&&end&&end<start){showErr('結束時間要晚於開始時間');return}
-  const cost=$('fCost').value===''?0:Number($('fCost').value);
-  if(!(cost>=0)){showErr('預估成本需為 0 以上的數字');return}
-  const task={
-    id:editing?.id||store.newId(),stage:formStage,category:cat,item,
-    date:$('fDate').value,due:$('fDue').value,start,end,
-    urgency:$('fUrg').value,owner,priority:$('fPri').value,cost,note:$('fNote').value.trim(),
-    done:editing?$('fDone').checked:false,
-    createdAt:editing?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()
-  };
-  const isEdit=!!editing;
-  $('saveBtn').disabled=true;
-  try{
-    if(optsChanged)await store.saveOpts();
-    await store.save(task);
-    if(task.stage!==state.stage){state.stage=task.stage;remember()}
-    closeForm();toast(isEdit?'已更新':'已新增');render();
-  }catch(err){showErr(saveErrMsg(err))}
-  finally{$('saveBtn').disabled=false}
+R.overview=()=>{
+  const s=state.settings,t=todayStr(),all=stats(state.tasks);
+  let hero;
+  if(s.weddingDate){
+    const d=dayDiff(s.weddingDate,t);
+    const ring=`<svg class="ring" viewBox="0 0 84 84" role="img" aria-label="整體進度 ${all.pct}%"><circle cx="42" cy="42" r="34" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="8"/><circle cx="42" cy="42" r="34" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-dasharray="${(all.pct/100*213.6).toFixed(1)} 213.6" transform="rotate(-90 42 42)"/><text x="42" y="42" text-anchor="middle" fill="#fff" font-size="17" font-weight="700">${all.pct}%</text><text x="42" y="57" text-anchor="middle" fill="#fff" font-size="10" opacity=".85">完成</text></svg>`;
+    hero=`<section class="hero"><div><small>${d>0?'距離婚禮還有':d===0?'就是今天':'婚禮已過'}</small>
+      <div class="days num">${d>0?d:d===0?'囍':-d}<em>${d===0?'':'天'}</em></div>
+      <div class="date num">${s.weddingDate.slice(0,4)} 年 ${fmtDate(s.weddingDate)}</div></div>${ring}</section>`;
+  }else{
+    hero=`<section class="hero unset"><div><b style="font-family:var(--serif);font-size:18px">還沒設定婚禮日期</b><div style="font-size:13px;color:var(--ink-2)">設定後這裡會顯示倒數天數</div></div><button class="btn primary" type="button" data-action="settings">設定</button></section>`;
+  }
+  const stageRows=STAGES.map(st=>{const x=stats(state.tasks.filter(k=>k.stage===st.id));
+    return `<button class="srow" type="button" data-goto-stage="${st.id}"><span class="n">${st.name}</span>
+      <span class="bar"><i style="width:${x.pct}%"></i></span>
+      <span class="m num">${x.done}/${x.total} · <span class="od ${x.overdue?'':'zero'}">逾期 ${x.overdue}</span></span></button>`}).join('');
+  const overdue=state.tasks.filter(isOverdue).sort((a,b)=>a.due.localeCompare(b.due));
+  const limit=addDays(t,14),upcoming=[];
+  for(const k of state.tasks){ if(k.done)continue;
+    const whens=[k.date,k.due].filter(w=>w&&w>=t&&w<=limit).sort();
+    if(whens.length)upcoming.push({k,w:whens[0]});}
+  upcoming.sort((a,b)=>a.w.localeCompare(b.w));
+  const b=+s.budget||0;
+  const signed=state.vendors.filter(v=>v.status==='已簽約').length,asking=state.vendors.filter(v=>v.status==='詢價中').length;
+  return `${hero}
+    <div class="sec-h">三階段進度<button class="link" type="button" data-nav="tasks">看全部任務</button></div>
+    <div class="stage-rows">${stageRows}</div>
+    <div class="sec-h">逾期 <span class="od ${overdue.length?'':'zero'} num">${overdue.length}</span></div>
+    ${overdue.length?`<div class="rows">${overdue.slice(0,5).map(k=>rowItem(k,k.due)).join('')}</div>`:`<div class="empty" style="padding:16px">沒有逾期的項目</div>`}
+    <div class="sec-h">未來 14 天<button class="link" type="button" data-nav="calendar">看月曆</button></div>
+    ${upcoming.length?`<div class="rows">${upcoming.slice(0,6).map(x=>rowItem(x.k,x.w)).join('')}</div>`:`<div class="empty" style="padding:16px">接下來兩週沒有活動或期限</div>`}
+    <div class="sec-h">預算與廠商</div>
+    <div class="mini">
+      <button class="kpi" type="button" data-nav="budget"><span>預估花費</span><b class="num">${money(all.cost)}</b><span class="num">${b?'總預算 '+money(b):'尚未設定預算'}</span></button>
+      <button class="kpi" type="button" data-nav="vendors"><span>廠商</span><b class="num">已簽約 ${signed}</b><span class="num">詢價中 ${asking}</span></button>
+    </div>`;
 };
+
+R.calendar=()=>{
+  const [y,m]=state.calMonth.split('-').map(Number);
+  const first=new Date(y,m-1,1),days=new Date(y,m,0).getDate(),lead=first.getDay(),t=todayStr();
+  const ev={};
+  const add=(d,kind,task)=>{if(!d||d.slice(0,7)!==state.calMonth)return;(ev[d]=ev[d]||[]).push({kind,task})};
+  for(const k of state.tasks){add(k.date,'act',k);if(k.due&&k.due!==k.date)add(k.due,'due',k)}
+  let cells=WD.split('').map((w,i)=>`<div class="wd ${i===0?'sun':''}">${w}</div>`).join('');
+  for(let i=0;i<lead;i++)cells+=`<div class="day blank"></div>`;
+  for(let d=1;d<=days;d++){
+    const ds=`${state.calMonth}-${pad(d)}`,list=ev[ds]||[];
+    const dots=list.slice(0,4).map(e=>`<i class="dot ${e.task.done?'done':e.kind==='due'?'due':''}"></i>`).join('');
+    const wed=ds===state.settings.weddingDate;
+    cells+=`<button type="button" class="day ${ds===t?'today':''} ${wed?'wedding':''}" data-day="${ds}" aria-pressed="${ds===state.calDay}" aria-label="${m}月${d}日，${list.length} 項">
+      ${wed?'<span class="xi">囍</span>':''}<span class="dn num">${d}</span><span class="dots">${dots}</span></button>`;
+  }
+  const sel=state.calDay;
+  const acts=state.tasks.filter(k=>k.date===sel),dues=state.tasks.filter(k=>k.due===sel&&k.date!==sel);
+  const items=[...acts.map(k=>card(k,'<span class="lab">活動</span>')),...dues.map(k=>card(k,'<span class="lab due">期限</span>'))].join('');
+  return `<div class="view-h"><h2>月曆</h2><span>點日期看當天安排</span></div>
+    <div class="cal-h"><button type="button" data-cal="prev" aria-label="上個月">‹</button><b class="num">${y} 年 ${m} 月</b><button type="button" data-cal="next" aria-label="下個月">›</button><button type="button" data-cal="today">今天</button></div>
+    <div class="cal">${cells}</div>
+    <div class="legend"><span><i class="dot"></i>活動日期</span><span><i class="dot due"></i>最後期限</span><span><i class="dot done"></i>已完成</span>${state.settings.weddingDate?'<span><b style="color:var(--red);font-family:var(--serif)">囍</b>婚禮日</span>':''}</div>
+    <div class="sec-h">${fmtDate(sel)}${sel===state.settings.weddingDate?' · 婚禮日':''}</div>
+    <div class="list" style="margin-top:0">${items||`<div class="empty" style="padding:16px">這天沒有安排</div>`}</div>`;
+};
+
+R.tasks=()=>{
+  const stageCards=STAGES.map(s=>{
+    const st=stats(state.tasks.filter(t=>t.stage===s.id));
+    return `<button class="stage num" type="button" role="tab" data-stage="${s.id}" aria-selected="${s.id===state.stage}">
+      <span class="step">${s.step}</span><span class="name">${s.name}</span>
+      <span class="pct">${st.pct}<small>%</small></span>
+      <span class="bar"><i style="width:${st.pct}%"></i></span>
+      <span class="meta"><span>完成 ${st.done}/${st.total}</span><span class="od ${st.overdue?'':'zero'}">逾期 ${st.overdue}</span></span>
+    </button>`}).join('');
+  const cur=state.tasks.filter(t=>t.stage===state.stage),st=stats(cur);
+  const samples=state.tasks.filter(t=>t.sample).length;
+  const cats=[...new Set(cur.map(t=>t.category).filter(Boolean))];
+  if(state.cat&&!cats.includes(state.cat))state.cat='';
+  let list=cur.filter(t=>!state.cat||t.category===state.cat);
+  if(state.filter==='open')list=list.filter(t=>!t.done);
+  if(state.filter==='overdue')list=list.filter(isOverdue);
+  if(state.filter==='done')list=list.filter(t=>t.done);
+  const key=t=>t.due||t.date||'9999',pr=t=>PRIORITY.indexOf(t.priority);
+  list.sort((a,b)=>(a.done-b.done)||key(a).localeCompare(key(b))||(pr(a)-pr(b)));
+  let html='',shownDone=false;
+  for(const t of list){
+    if(t.done&&!shownDone&&state.filter==='all'&&list.some(x=>!x.done)){html+='<div class="group-h">已完成</div>';shownDone=true}
+    html+=card(t);
+  }
+  const chip=(f,l)=>`<button class="chip" type="button" data-f="${f}" aria-pressed="${state.filter===f}">${l}</button>`;
+  return `<div class="stages" role="tablist">${stageCards}</div>
+    <section class="kpis num">
+      <div class="kpi"><span>完成 / 總數</span><b>${st.done} / ${st.total}</b></div>
+      <div class="kpi ${st.overdue?'alert':''}"><span>逾期</span><b>${st.overdue} 項</b></div>
+      <div class="kpi"><span>預估成本</span><b>${money(st.cost)}</b></div>
+      <div class="kpi"><span>下一個期限</span><b>${st.next?fmtDate(st.next.due):'—'}</b></div>
+    </section>
+    ${samples?`<div class="banner"><span>目前有 ${samples} 筆範例資料，可以直接修改，或一次清除。</span><button type="button" id="clearSamples">清除範例</button></div>`:''}
+    <div class="chips">${chip('all','全部')}${chip('open','待辦')}${chip('overdue','逾期')}${chip('done','已完成')}
+      <select id="catFilter" aria-label="依類別篩選"><option value="">所有類別</option>${cats.map(c=>`<option ${c===state.cat?'selected':''}>${esc(c)}</option>`).join('')}</select></div>
+    <div class="list">${html||`<div class="empty">${cur.length?'這個篩選條件下沒有項目':`「${stageName(state.stage)}」還沒有任何項目<br>點右下角「新增項目」開始`}</div>`}</div>`;
+};
+
+R.vendors=()=>{
+  const V=state.vendors,signed=V.filter(v=>v.status==='已簽約');
+  const sum=(l,k)=>l.reduce((s,v)=>s+(+v[k]||0),0);
+  const list=state.vfilter==='all'?[...V]:V.filter(v=>v.status===state.vfilter);
+  const rank={'已簽約':0,'詢價中':1,'不考慮':2};
+  list.sort((a,b)=>((rank[a.status]??3)-(rank[b.status]??3))||String(a.category||'').localeCompare(String(b.category||''))||String(a.name).localeCompare(String(b.name)));
+  const stCls={'已簽約':'st-ok','詢價中':'st-wait','不考慮':'st-no'};
+  const cards=list.map(v=>{
+    const url=safeUrl(v.link);
+    const contact=[
+      v.contact?`<span>${esc(v.contact)}</span>`:'',
+      v.phone?`<a href="tel:${esc(String(v.phone).replace(/[^\d+]/g,''))}">${esc(v.phone)}</a>`:'',
+      v.link?(url?`<a href="${esc(url)}" target="_blank" rel="noopener">${esc(host(url)||'網站')}</a>`:`<span>LINE：${esc(v.link)}</span>`):''
+    ].join('');
+    const m2=[v.quote?`<span>報價 ${money(v.quote)}</span>`:'',v.deposit?`<span>已付訂金 ${money(v.deposit)}</span>`:''].join('');
+    return `<div class="vcard ${v.status==='不考慮'?'muted':''}" role="button" tabindex="0" data-edit="vendors:${esc(v.id)}">
+      <div class="vtop"><b>${esc(v.name)}</b>${v.status?`<span class="tag ${stCls[v.status]||''}">${esc(v.status)}</span>`:''}</div>
+      ${v.category?`<div class="tags"><span class="tag cat">${esc(v.category)}</span></div>`:''}
+      ${contact?`<div class="contact">${contact}</div>`:''}
+      ${m2?`<div class="facts num">${m2}</div>`:''}
+      ${v.note?`<div class="note">${esc(v.note)}</div>`:''}</div>`}).join('');
+  const chip=(f,l)=>`<button class="chip" type="button" data-vf="${f}" aria-pressed="${state.vfilter===f}">${l}</button>`;
+  return `<div class="view-h"><h2>廠商</h2><span>${V.length} 家</span></div>
+    <section class="kpis num">
+      <div class="kpi good"><span>已簽約</span><b>${signed.length} 家</b></div>
+      <div class="kpi"><span>詢價中</span><b>${V.filter(v=>v.status==='詢價中').length} 家</b></div>
+      <div class="kpi"><span>簽約總額</span><b>${money(sum(signed,'quote'))}</b></div>
+      <div class="kpi"><span>已付訂金</span><b>${money(sum(V,'deposit'))}</b></div>
+    </section>
+    <div class="chips">${chip('all','全部')}${VENDOR_STATUS.map(s=>chip(s,s)).join('')}</div>
+    <div class="list">${cards||`<div class="empty">${V.length?'沒有這個狀態的廠商':'還沒有廠商資料<br>點右下角「新增廠商」，記下婚宴場地、婚紗、新秘的聯絡方式與報價'}</div>`}</div>`;
+};
+
+const GUIDE=[
+  {t:'提親',s:'正式向女方家提出婚事',b:`<p>男方帶著父母或長輩（有時會請媒人）到女方家拜訪，正式表達結婚的意願。</p>
+    <ul><li>伴手禮常見水果禮盒、茶葉、喜糖等，數量多取雙數。</li>
+    <li>雙方家長通常會討論：訂婚與結婚日期（不少家庭會請老師合八字擇日）、聘金與大小聘、喜餅盒數、採用六禮或十二禮、宴客方式與桌數。</li>
+    <li>新人最好事先和各自家長溝通好想法，當天比較不容易卡住。</li></ul>`},
+  {t:'訂婚（文定）',s:'六禮、十二禮與儀式流程',b:`<p><b>聘禮：</b>六禮、十二禮的內容各地不同，常見項目有聘金（大聘、小聘）、喜餅、禮香禮燭與炮竹、四色糖、金飾、衣料鞋襪等；十二禮會在六禮之外再加其他禮品。女方通常會回禮，並退回部分聘金或禮品。</p>
+    <p><b>常見流程：</b></p>
+    <ol><li>男方帶聘禮到女方家（納采），女方收下聘禮。</li>
+    <li>新娘奉甜茶給男方親友。</li>
+    <li>男方親友喝完甜茶，把紅包放在茶杯裡回給新娘（壓茶甌）。</li>
+    <li>新娘坐在椅子上、腳放在矮凳，由新郎為新娘戴戒指，再由新娘為新郎戴。</li>
+    <li>祭祖，接著是訂婚宴。</li></ol>`},
+  {t:'迎娶',s:'結婚當天從男方出發到入新房',b:`<ol><li>男方祭祖後，禮車出發迎娶（常見取雙數車）。</li>
+    <li>到女方家後，常有伴娘設計的闖關遊戲，新郎給紅包、完成任務後接新娘。</li>
+    <li>新人拜別女方父母。</li>
+    <li>新娘出門上車，女方家長潑水、新娘丟扇，象徵嫁出後不再帶走娘家的壞脾氣。</li>
+    <li>到男方家後，常見過火爐、踩瓦片等習俗，再進入新房。</li></ol>`},
+  {t:'婚宴與歸寧',s:'宴客、送客與回娘家',b:`<ul><li>婚宴結束時，新人在門口捧喜糖送客。</li>
+    <li>歸寧（回門）是婚後新娘第一次回娘家，常見在婚後第三天，也有家庭依習俗擇日或與婚宴合併；女方有時會在這天宴請親友。</li></ul>`},
+  {t:'常見禁忌',s:'是否遵守可與家人討論',b:`<ul><li>安床後到新婚夜之前，新床不讓別人睡；有些家庭會請生肖屬龍的男孩翻床。</li>
+    <li>婚前一段時間避免參加喪禮。</li>
+    <li>新娘出門時由媒人或長輩撐黑傘或米篩遮頭。</li>
+    <li>訂婚、結婚當天避免說不吉利的話。</li></ul>`}
+];
+R.articles=()=>{
+  const seg=`<div class="seg-bar"><button type="button" data-aseg="guide" aria-pressed="${state.aseg==='guide'}">禮俗指南</button><button type="button" data-aseg="saved" aria-pressed="${state.aseg==='saved'}">我的收藏${state.articles.length?' '+state.articles.length:''}</button></div>`;
+  if(state.aseg==='guide'){
+    return `<div class="view-h"><h2>文章</h2></div>${seg}
+      <div class="guide" style="margin-top:14px">${GUIDE.map((g,i)=>`<details ${i===0?'open':''}><summary>${g.t}<small>${g.s}</small></summary><div class="body">${g.b}</div></details>`).join('')}</div>
+      <p class="hint">各地習俗差異很大，以上是常見做法，實際安排以雙方家長討論為準。</p>`;
+  }
+  const A=[...state.articles].sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+  const cards=A.map(a=>{const url=safeUrl(a.url);
+    return `<div class="vcard" role="button" tabindex="0" data-edit="articles:${esc(a.id)}">
+      <div class="vtop"><b>${esc(a.title)}</b>${a.category?`<span class="tag cat">${esc(a.category)}</span>`:''}</div>
+      ${url?`<div class="contact"><a href="${esc(url)}" target="_blank" rel="noopener">開啟文章 · ${esc(host(url))}</a></div>`:''}
+      ${a.note?`<div class="note">${esc(a.note)}</div>`:''}</div>`}).join('');
+  return `<div class="view-h"><h2>文章</h2></div>${seg}
+    <div class="list">${cards||`<div class="empty">還沒有收藏的文章<br>看到好用的喜餅比較、婚紗心得，點右下角「收藏文章」存起來</div>`}</div>`;
+};
+
+R.budget=()=>{
+  const b=+state.settings.budget||0,T=state.tasks,all=stats(T);
+  const remain=b-all.actual,cap=Math.max(b,all.cost,all.actual,1);
+  const pctW=v=>(v/cap*100).toFixed(1)+'%';
+  const over=b&&all.cost>b;
+  const meter=`<div class="meter" role="img" aria-label="實際 ${money(all.actual)}，預估 ${money(all.cost)}，總預算 ${money(b)}">
+      <i class="e" style="width:${pctW(all.cost)}" title="預估 ${money(all.cost)}"></i><i class="a" style="width:${pctW(all.actual)}" title="實際 ${money(all.actual)}"></i>
+      ${b?`<span class="cap" style="left:calc(${pctW(b)} - 1px)" title="總預算 ${money(b)}"></span>`:''}</div>
+    <div class="mlab num"><span>實際 ${money(all.actual)}</span><span>預估 ${money(all.cost)}</span><span>${b?'｜ 預算 '+money(b):'未設定預算'}</span></div>
+    ${over?`<div class="warnline">預估花費超出預算 ${money(all.cost-b)}</div>`:''}`;
+  const groupRows=groups=>{
+    const mx=Math.max(1,...groups.map(g=>Math.max(g.e,g.a)));
+    return groups.map(g=>`<div class="brow"><span class="l" title="${esc(g.l)}">${esc(g.l)}</span><div>
+      <div class="bars"><span class="b e" style="width:${(g.e/mx*100).toFixed(1)}%" title="${esc(g.l)} 預估 ${money(g.e)}"></span><span class="b a" style="width:${(g.a/mx*100).toFixed(1)}%" title="${esc(g.l)} 實際 ${money(g.a)}"></span></div>
+      <div class="v num">預估 ${money(g.e)} · 實際 ${money(g.a)}</div></div></div>`).join('');
+  };
+  const byStage=STAGES.map(s=>{const x=T.filter(t=>t.stage===s.id);return{l:s.name,e:x.reduce((a,t)=>a+(+t.cost||0),0),a:x.reduce((a,t)=>a+(+t.actual||0),0)}});
+  const cm={};for(const t of T){const k=t.category||'未分類';cm[k]=cm[k]||{l:k,e:0,a:0};cm[k].e+=+t.cost||0;cm[k].a+=+t.actual||0}
+  const byCat=Object.values(cm).filter(g=>g.e||g.a).sort((x,y)=>y.e-x.e);
+  const key=`<div class="key"><span><i style="background:var(--est)"></i>預估</span><span><i style="background:var(--red)"></i>實際</span></div>`;
+  const V=state.vendors,signed=V.filter(v=>v.status==='已簽約');
+  return `<div class="view-h"><h2>預算</h2><span>依任務的預估成本與實際支出計算</span></div>
+    <section class="kpis num">
+      <button class="kpi" type="button" data-action="settings"><span>總預算 ✎</span><b>${b?money(b):'點此設定'}</b></button>
+      <div class="kpi ${over?'alert':''}"><span>預估花費</span><b>${money(all.cost)}</b></div>
+      <div class="kpi"><span>實際支出</span><b>${money(all.actual)}</b></div>
+      <div class="kpi ${b&&remain<0?'alert':b?'good':''}"><span>預算剩餘</span><b>${b?money(remain):'—'}</b></div>
+    </section>
+    <div class="card" style="margin-top:12px">${key}${meter}</div>
+    <div class="sec-h">各階段</div>
+    <div class="card">${key}<div class="brows">${groupRows(byStage)}</div></div>
+    <div class="sec-h">各類別</div>
+    <div class="card">${byCat.length?key+`<div class="brows">${groupRows(byCat)}</div>`:`<div class="empty" style="border:0;padding:12px">任務填上預估成本後，這裡會依類別統計</div>`}</div>
+    <div class="sec-h">廠商<button class="link" type="button" data-nav="vendors">看廠商</button></div>
+    <section class="kpis num" style="margin-top:0;grid-template-columns:repeat(2,minmax(0,1fr))">
+      <div class="kpi"><span>已簽約總額</span><b>${money(signed.reduce((s,v)=>s+(+v.quote||0),0))}</b></div>
+      <div class="kpi"><span>已付訂金</span><b>${money(V.reduce((s,v)=>s+(+v.deposit||0),0))}</b></div>
+    </section>
+    <p class="hint">實際支出請在各任務的「實際支出」欄位填寫。</p>`;
+};
+
+/* ================= render ================= */
+const FAB={overview:['新增項目','tasks'],calendar:['新增項目','tasks'],tasks:['新增項目','tasks'],vendors:['新增廠商','vendors'],articles:['收藏文章','articles'],budget:null};
+function render(){
+  const s=state.settings,parts=[];
+  if(s.groom||s.bride)parts.push(`${esc(s.groom||'新郎')} & ${esc(s.bride||'新娘')}`);
+  if(s.weddingDate){const d=dayDiff(s.weddingDate,todayStr());parts.push(d>0?`婚禮倒數 ${d} 天`:d===0?'今天結婚':fmtDate(s.weddingDate))}
+  $('subline').innerHTML=parts.join(' · ')||'提親 → 訂婚 → 婚禮';
+  $('tabbar').innerHTML=VIEWS.map(v=>`<button class="tab" type="button" data-nav="${v.id}" ${v.id===state.view?'aria-current="page"':''}>${v.icon}<span>${v.name}</span></button>`).join('');
+  $('view').innerHTML=state.ready?R[state.view]():'<div class="empty" style="margin-top:16px">載入中…</div>';
+  const f=FAB[state.view];$('fab').hidden=!f;if(f)$('fabLabel').textContent=f[0];
+}
+
+/* ================= form ================= */
+const FIELDS={
+  tasks:[
+    {k:'stage',t:'seg',label:'階段',req:1,opts:()=>STAGES.map(s=>[s.id,s.name])},
+    {k:'item',t:'text',label:'項目',req:1,full:1,max:80,ph:'例如：預訂訂婚喜餅'},
+    {k:'category',t:'select',label:'類別',opts:()=>state.opts.categories,addNew:'categories',newLabel:'新增類別'},
+    {k:'owner',t:'select',label:'負責處理人',opts:()=>state.opts.people,addNew:'people',newLabel:'新增負責人'},
+    {k:'date',t:'date',label:'活動日期'},{k:'due',t:'date',label:'最後期限'},
+    {k:'start',t:'time',label:'開始時間'},{k:'end',t:'time',label:'結束時間'},
+    {k:'urgency',t:'select',label:'急迫性',opts:()=>URGENCY},{k:'priority',t:'select',label:'優先等級',opts:()=>PRIORITY},
+    {k:'cost',t:'number',label:'預估成本（元）'},{k:'actual',t:'number',label:'實際支出（元）'},
+    {k:'note',t:'textarea',label:'備註',full:1,ph:'廠商聯絡方式、注意事項…'},
+    {k:'done',t:'check',label:'已完成',editOnly:1}
+  ],
+  vendors:[
+    {k:'name',t:'text',label:'廠商名稱',req:1,full:1,max:60,ph:'例如：○○婚宴會館'},
+    {k:'category',t:'select',label:'類別',opts:()=>state.opts.categories,addNew:'categories',newLabel:'新增類別'},
+    {k:'status',t:'select',label:'狀態',opts:()=>VENDOR_STATUS,noBlank:1},
+    {k:'contact',t:'text',label:'聯絡人',max:30},{k:'phone',t:'tel',label:'電話',max:30},
+    {k:'link',t:'text',label:'LINE ID 或網址',full:1,max:200,ph:'https://… 或 LINE ID'},
+    {k:'quote',t:'number',label:'報價（元）'},{k:'deposit',t:'number',label:'已付訂金（元）'},
+    {k:'note',t:'textarea',label:'備註',full:1,ph:'方案內容、付款期限…'}
+  ],
+  articles:[
+    {k:'title',t:'text',label:'標題',req:1,full:1,max:100},
+    {k:'url',t:'url',label:'網址',full:1,max:500,ph:'https://'},
+    {k:'category',t:'select',label:'分類',opts:()=>ARTICLE_CATS,full:1},
+    {k:'note',t:'textarea',label:'筆記',full:1,ph:'重點整理…'}
+  ],
+  settings:[
+    {k:'weddingDate',t:'date',label:'婚禮日期',full:1},
+    {k:'groom',t:'text',label:'新郎',max:20},{k:'bride',t:'text',label:'新娘',max:20},
+    {k:'budget',t:'number',label:'總預算（元）',full:1}
+  ]
+};
+const TITLES={tasks:['新增項目','編輯項目'],vendors:['新增廠商','編輯廠商'],articles:['收藏文章','編輯文章'],settings:['婚禮設定','婚禮設定']};
+let form={kind:null,item:null,seg:{},delArmed:false};
+
+function fieldHtml(f,v,isEdit){
+  if(f.editOnly&&!isEdit)return '';
+  const id='f_'+f.k,lab=`${f.label}${f.req?' <em>*</em>':''}`,cls=`f ${f.full?'full':''}`;
+  if(f.t==='seg'){form.seg[f.k]=v;return `<div class="f full"><span class="lbl">${lab}</span><div class="seg" data-segk="${f.k}">${f.opts().map(([val,l])=>`<button type="button" data-seg="${val}" aria-pressed="${val===v}">${l}</button>`).join('')}</div></div>`}
+  if(f.t==='check')return `<label class="chk"><input type="checkbox" id="${id}" ${v?'checked':''}> ${f.label}</label>`;
+  if(f.t==='textarea')return `<div class="${cls}"><label for="${id}">${lab}</label><textarea id="${id}" maxlength="1000" placeholder="${esc(f.ph||'')}">${esc(v||'')}</textarea></div>`;
+  if(f.t==='select'){
+    const list=[...f.opts()];if(v&&!list.includes(v))list.push(v);
+    const opts=(f.noBlank?'':`<option value="">— 未指定 —</option>`)+list.map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join('')+(f.addNew?`<option value="${NEW}">＋ ${f.newLabel}</option>`:'');
+    return `<div class="${cls}"><label for="${id}">${lab}</label><select id="${id}" data-addnew="${f.addNew?1:''}">${opts}</select></div>`+
+      (f.addNew?`<div class="f" id="${id}_wrap" hidden><label for="${id}_new">${f.newLabel}名稱</label><input id="${id}_new" maxlength="12"></div>`:'');
+  }
+  const type={number:'number',date:'date',time:'time',tel:'tel',url:'url'}[f.t]||'text';
+  const extra=f.t==='number'?'inputmode="numeric" min="0" step="100"':'';
+  const val=f.t==='number'?(v?v:''):(v||'');
+  return `<div class="${cls}"><label for="${id}">${lab}</label><input type="${type}" id="${id}" ${extra} ${f.max?`maxlength="${f.max}"`:''} placeholder="${esc(f.ph||'')}" value="${esc(val)}" autocomplete="off"></div>`;
+}
+function openForm(kind,item,defaults){
+  const isEdit=!!item;form={kind,item:item||null,seg:{},delArmed:false};
+  const base=kind==='settings'?state.settings:(item||defaults||{});
+  $('formTitle').textContent=TITLES[kind][isEdit?1:0];
+  $('formBody').innerHTML=FIELDS[kind].map(f=>fieldHtml(f,base[f.k],isEdit)).join('')+
+    (kind==='settings'&&!store.db?`<p class="hint" style="grid-column:1/-1;margin:0">資料存在這支手機或這台電腦的瀏覽器裡；換裝置或清除瀏覽器資料就看不到了。</p>`:'')+
+    `<p class="err" id="fErr" hidden></p>`;
+  $('delBtn').hidden=!(isEdit&&kind!=='settings');$('delBtn').textContent='刪除';$('delBtn').classList.remove('arm');
+  $('scrim').hidden=false;document.body.style.overflow='hidden';
+  const first=FIELDS[kind].find(f=>f.req&&f.t!=='seg');
+  if(!isEdit&&first)setTimeout(()=>$('f_'+first.k)?.focus(),60);
+}
+function closeForm(){$('scrim').hidden=true;document.body.style.overflow='';form.kind=null}
+function showErr(m){$('fErr').textContent=m;$('fErr').hidden=false}
 function saveErrMsg(err){
   const c=err?.code;
   if(c==='permission_denied'||c==='not_granted')return '你目前只有檢視權限，無法儲存。請擁有者給你編輯權限。';
   if(c==='quota_exceeded')return '資料數量已達上限，請先刪除部分項目。';
   return '儲存失敗，請檢查網路後再試一次。';
 }
+$('formBody').addEventListener('change',e=>{
+  const s=e.target;if(s.tagName==='SELECT'&&s.dataset.addnew){const w=$(s.id+'_wrap');w.hidden=s.value!==NEW;if(s.value===NEW)$(s.id+'_new').focus()}
+});
+$('formBody').addEventListener('click',e=>{
+  const b=e.target.closest('[data-seg]');if(!b)return;const k=b.parentElement.dataset.segk;form.seg[k]=b.dataset.seg;
+  b.parentElement.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+});
+$('form').onsubmit=async e=>{
+  e.preventDefault();
+  const {kind,item}=form,isEdit=!!item,out={};let optsChanged=false;
+  for(const f of FIELDS[kind]){
+    if(f.editOnly&&!isEdit){out[f.k]=false;continue}
+    const el=$('f_'+f.k);let v;
+    if(f.t==='seg')v=form.seg[f.k]||'';
+    else if(f.t==='check')v=el.checked;
+    else if(f.t==='number'){v=el.value===''?0:Number(el.value);if(!(v>=0)){showErr(`${f.label}需為 0 以上的數字`);return}}
+    else v=el.value.trim();
+    if(f.t==='select'&&v===NEW){
+      v=$('f_'+f.k+'_new').value.trim();if(!v){showErr(`請輸入${f.newLabel}名稱`);return}
+      if(!state.opts[f.addNew].includes(v)){state.opts[f.addNew].push(v);optsChanged=true}
+    }
+    if(f.req&&!v){showErr(`請填寫${f.label}`);return}
+    out[f.k]=v;
+  }
+  if(kind==='tasks'&&out.start&&out.end&&out.end<out.start){showErr('結束時間要晚於開始時間');return}
+  if(kind==='articles'&&out.url&&!safeUrl(out.url)){showErr('網址請以 http:// 或 https:// 開頭');return}
+  $('saveBtn').disabled=true;
+  try{
+    if(optsChanged)await store.saveMeta('options');
+    if(kind==='settings'){state.settings={...state.settings,...out};await store.saveMeta('settings');closeForm();toast('設定已儲存');render();return}
+    const now=new Date().toISOString();
+    const obj={...(item||{}),...out,id:item?.id||store.newId(kind),createdAt:item?.createdAt||now,updatedAt:now};
+    await store.save(kind,obj);
+    if(kind==='tasks'&&obj.stage!==state.stage&&state.view==='tasks'){state.stage=obj.stage;remember()}
+    closeForm();toast(isEdit?'已更新':'已新增');render();
+  }catch(err){showErr(saveErrMsg(err))}
+  finally{$('saveBtn').disabled=false}
+};
 $('delBtn').onclick=async()=>{
-  if(!delArmed){delArmed=true;$('delBtn').textContent='確定刪除？';$('delBtn').classList.add('arm');return}
-  try{await store.remove(editing.id);closeForm();toast('已刪除')}catch(err){showErr(saveErrMsg(err))}
+  if(!form.delArmed){form.delArmed=true;$('delBtn').textContent='確定刪除？';$('delBtn').classList.add('arm');return}
+  try{await store.remove(form.kind,form.item.id);closeForm();toast('已刪除')}catch(err){showErr(saveErrMsg(err))}
 };
 $('closeBtn').onclick=$('cancelBtn').onclick=closeForm;
 $('scrim').onclick=e=>{if(e.target===$('scrim'))closeForm()};
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('scrim').hidden)closeForm()});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!$('scrim').hidden)closeForm();
+  if(e.key==='Enter'&&e.target.matches('.vcard'))e.target.click();
+});
 
-/* ---------- page events ---------- */
-function remember(){try{localStorage.setItem('wp-stage',state.stage)}catch{}}
-$('stages').onclick=e=>{const b=e.target.closest('[data-stage]');if(b){state.stage=b.dataset.stage;state.cat='';remember();render()}};
-$('toolbar').onclick=e=>{const b=e.target.closest('[data-f]');if(b){state.filter=b.dataset.f;render()}};
-$('catFilter').onchange=e=>{state.cat=e.target.value;render()};
-$('addBtn').onclick=()=>openForm(null);
+/* ================= page events ================= */
+function go(view){state.view=view;remember();render();window.scrollTo(0,0)}
+$('fab').onclick=()=>{
+  const f=FAB[state.view];if(!f)return;
+  if(f[1]==='tasks'){const d={stage:state.stage,urgency:'一般',priority:'中'};if(state.view==='calendar')d.date=state.calDay;openForm('tasks',null,d)}
+  else if(f[1]==='vendors')openForm('vendors',null,{status:'詢價中'});
+  else{state.aseg='saved';render();openForm('articles',null,{})}
+};
+document.addEventListener('change',e=>{if(e.target.id==='catFilter'){state.cat=e.target.value;render()}});
 let clearArmed=false;
 document.addEventListener('click',async e=>{
-  const tg=e.target.closest('[data-toggle]');
-  if(tg){const t=state.tasks.find(x=>x.id===tg.dataset.toggle);if(!t)return;
-    try{await store.save({...t,done:!t.done,updatedAt:new Date().toISOString()});toast(t.done?'已標為未完成':'完成一項 ✓')}catch(err){toast(saveErrMsg(err))}
+  const t=e.target;
+  if(t.closest('a')||t.closest('#scrim'))return;
+  const el=sel=>t.closest(sel);
+  let x;
+  if(x=el('[data-nav]'))return go(x.dataset.nav);
+  if(x=el('[data-action="settings"]'))return openForm('settings');
+  if(x=el('[data-goto-stage]')){state.stage=x.dataset.gotoStage;state.cat='';return go('tasks')}
+  if(x=el('[data-stage]')){state.stage=x.dataset.stage;state.cat='';remember();return render()}
+  if(x=el('[data-f]')){state.filter=x.dataset.f;return render()}
+  if(x=el('[data-vf]')){state.vfilter=x.dataset.vf;return render()}
+  if(x=el('[data-aseg]')){state.aseg=x.dataset.aseg;return render()}
+  if(x=el('[data-day]')){state.calDay=x.dataset.day;return render()}
+  if(x=el('[data-cal]')){
+    const [y,m]=state.calMonth.split('-').map(Number);
+    if(x.dataset.cal==='today'){state.calMonth=todayStr().slice(0,7);state.calDay=todayStr()}
+    else{const d=new Date(y,m-1+(x.dataset.cal==='next'?1:-1),1);state.calMonth=ymd(d).slice(0,7)}
+    return render();
+  }
+  if(x=el('[data-toggle]')){const k=state.tasks.find(v=>v.id===x.dataset.toggle);if(!k)return;
+    try{await store.save('tasks',{...k,done:!k.done,updatedAt:new Date().toISOString()});toast(k.done?'已標為未完成':'完成一項 ✓')}catch(err){toast(saveErrMsg(err))}
     return}
-  const ed=e.target.closest('[data-edit]');
-  if(ed){const t=state.tasks.find(x=>x.id===ed.dataset.edit);if(t)openForm(t);return}
-  if(e.target.id==='clearSamples'){
-    if(!clearArmed){clearArmed=true;e.target.textContent='確定清除？';return}
+  if(x=el('[data-edit]')){const [c,id]=x.dataset.edit.split(':');const it=state[c]?.find(v=>v.id===id);if(it)openForm(c,it);return}
+  if(t.id==='clearSamples'){
+    if(!clearArmed){clearArmed=true;t.textContent='確定清除？';return}
     clearArmed=false;
-    try{for(const t of state.tasks.filter(x=>x.sample))await store.remove(t.id);toast('已清除範例')}catch(err){toast(saveErrMsg(err))}
+    try{for(const k of state.tasks.filter(v=>v.sample))await store.remove('tasks',k.id);toast('已清除範例')}catch(err){toast(saveErrMsg(err))}
   }
 });
 let toastT;
