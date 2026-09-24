@@ -1,3 +1,9 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>婚禮籌備</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,13 +145,14 @@ button{cursor:pointer}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;z-index:30;max-width:calc(100vw - 32px)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
-
+</head>
+<body>
 <div class="wrap">
   <header class="top">
     <div class="brand">
       <div class="seal" aria-hidden="true">囍</div>
       <div>
-        <h1>囍事籌備本</h1>
+        <h1>婚禮籌備</h1>
         <p>提親 → 訂婚 → 婚禮</p>
       </div>
       <div class="overall num" id="overall"><b>0%</b>整體進度</div>
@@ -420,7 +427,7 @@ $('form').onsubmit=async e=>{
 };
 function saveErrMsg(err){
   const c=err?.code;
-  if(c==='permission_denied'||c==='not_granted')return '你目前只有檢視權限，無法儲存。請請擁有者給你編輯權限。';
+  if(c==='permission_denied'||c==='not_granted')return '你目前只有檢視權限，無法儲存。請擁有者給你編輯權限。';
   if(c==='quota_exceeded')return '資料數量已達上限，請先刪除部分項目。';
   return '儲存失敗，請檢查網路後再試一次。';
 }
@@ -458,3 +465,5 @@ function toast(m){const el=$('toast');el.textContent=m;el.hidden=false;clearTime
 render();
 store.init();
 </script>
+</body>
+</html>
