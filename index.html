@@ -258,6 +258,24 @@ a{color:var(--red)}
 .btn.danger{color:var(--red);border-color:color-mix(in srgb,var(--red) 40%,var(--line))}
 .btn.danger.arm{background:var(--red);color:#fff}
 
+/* photos */
+.thumbs{display:flex;gap:6px;flex-wrap:wrap}
+.thumbs img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line);cursor:zoom-in;display:block;background:var(--surface-2)}
+.ph-grid{display:flex;gap:10px;flex-wrap:wrap;padding-top:6px}
+.ph{position:relative;width:72px;height:72px}
+.ph img{width:100%;height:100%;object-fit:cover;border-radius:9px;border:1px solid var(--line);display:block}
+.ph button{position:absolute;top:-7px;right:-7px;width:24px;height:24px;border-radius:50%;border:2px solid var(--bg);background:var(--ink);color:var(--bg);font-size:14px;line-height:1;display:grid;place-items:center;padding:0}
+.ph-add{position:relative;width:72px;height:72px;border:1.5px dashed var(--ink-3);border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11.5px;color:var(--ink-2);cursor:pointer;background:var(--surface)}
+.ph-add svg{width:22px;height:22px}
+.ph-add input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
+.ph-add:focus-within{outline:2px solid var(--red);outline-offset:2px}
+.ph-busy{width:72px;height:72px;border-radius:9px;background:var(--surface-2);display:grid;place-items:center;font-size:12px;color:var(--ink-3)}
+.lightbox{position:fixed;inset:0;z-index:40;background:rgba(10,4,6,.94);display:flex;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 56px) 12px calc(env(safe-area-inset-bottom,0px) + 56px)}
+.lightbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px}
+.lb-x{position:absolute;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:22px;line-height:1}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:26px;line-height:1}
+.lb-prev{left:8px}.lb-next{right:8px}
+.lb-count{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);left:0;right:0;text-align:center;color:#fff;font-size:13px;opacity:.85}
 .toast{position:fixed;left:50%;bottom:calc(var(--tabbar) + 76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;z-index:30;max-width:calc(100vw - 32px)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -299,6 +317,13 @@ a{color:var(--red)}
   </form>
 </div>
 <div class="toast" id="toast" hidden></div>
+<div class="lightbox" id="lightbox" hidden role="dialog" aria-label="照片">
+  <img id="lbImg" alt="">
+  <button type="button" class="lb-x" id="lbClose" aria-label="關閉">×</button>
+  <button type="button" class="lb-nav lb-prev" id="lbPrev" aria-label="上一張">‹</button>
+  <button type="button" class="lb-nav lb-next" id="lbNext" aria-label="下一張">›</button>
+  <div class="lb-count num" id="lbCount"></div>
+</div>
 
 <!-- Firebase：雲端同步與登入。設定值放在 firebase-config.js -->
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -318,6 +343,7 @@ const DEFAULT_OPTS={
 };
 const DEFAULT_SETTINGS={weddingDate:'',budget:0,groom:'',bride:''};
 const NEW='__new__';
+const MAX_PHOTOS=4;
 const I=p=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
 const VIEWS=[
   {id:'overview',name:'總覽',icon:I('<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>')},
@@ -414,8 +440,25 @@ const store={
     if(b.raw.settings&&!state.settings.weddingDate&&!state.settings.budget)batch.set(this.fs.doc('meta/settings'),{...DEFAULT_SETTINGS,...b.raw.settings});
     if(b.raw.opts)batch.set(this.fs.doc('meta/options'),{categories:[...new Set([...state.opts.categories,...(b.raw.opts.categories||[])])],people:[...new Set([...state.opts.people,...(b.raw.opts.people||[])])]});
     await batch.commit();
+    for(const c of COLS)for(const it of (b.raw[c]||[]))for(const p of (it.photos||[])){
+      let d=null;try{d=localStorage.getItem('wp-photo-'+p.id)}catch{}
+      if(d){await this.fs.collection('photos').doc(p.id).set({data:d,createdAt:new Date().toISOString()});try{localStorage.removeItem('wp-photo-'+p.id)}catch{}}
+    }
     try{localStorage.setItem('wp-local-uploaded',localStorage.getItem('wp-local'));localStorage.removeItem('wp-local')}catch{}
     return n;
+  },
+  async savePhoto(id,data){
+    if(this.db){await this.db.collection('photos').doc(id).set({data,createdAt:new Date().toISOString()});return}
+    if(this.mode!=='local')throw {code:'permission_denied'};
+    try{localStorage.setItem('wp-photo-'+id,data)}catch{throw {code:'local_quota'}}
+  },
+  async getPhoto(id){
+    if(this.db){const s=await this.db.collection('photos').doc(id).get();return s.exists?s.data().data:null}
+    try{return localStorage.getItem('wp-photo-'+id)}catch{return null}
+  },
+  async removePhoto(id){
+    if(this.db){await this.db.collection('photos').doc(id).delete();return}
+    try{localStorage.removeItem('wp-photo-'+id)}catch{}
   },
   newId(c){return this.db?this.db.collection(c).doc().id:c[0]+Date.now().toString(36)+Math.random().toString(36).slice(2,6)},
   persistLocal(){try{localStorage.setItem('wp-local',JSON.stringify({tasks:state.tasks,vendors:state.vendors,articles:state.articles,opts:state.opts,settings:state.settings}))}catch{toast('這個瀏覽器無法儲存資料')}},
@@ -474,6 +517,10 @@ function dueBadge(t){
   if(d===0)return `<span class="due late">今天到期</span>`;
   return `<span class="due ${d<=7?'soon':''} num">剩 ${d} 天</span>`;
 }
+function thumbsHtml(item,kind){
+  if(!item.photos?.length)return '';
+  return `<span class="thumbs">${item.photos.map((p,i)=>`<img src="${esc(p.thumb)}" alt="照片 ${i+1}" data-photo="${kind}:${esc(item.id)}:${i}" loading="lazy">`).join('')}</span>`;
+}
 function card(t,label){
   const u=URGENCY.indexOf(t.urgency);
   const time=t.start?`${t.start}${t.end?'–'+t.end:''}`:'';
@@ -498,6 +545,7 @@ function card(t,label){
       </span>
       ${facts?`<span class="facts num">${facts}</span>`:''}
       ${t.note?`<span class="note">${esc(t.note)}</span>`:''}
+      ${thumbsHtml(t,'tasks')}
     </button>
   </article>`;
 }
@@ -633,7 +681,7 @@ R.vendors=()=>{
       ${v.category?`<div class="tags"><span class="tag cat">${esc(v.category)}</span></div>`:''}
       ${contact?`<div class="contact">${contact}</div>`:''}
       ${m2?`<div class="facts num">${m2}</div>`:''}
-      ${v.note?`<div class="note">${esc(v.note)}</div>`:''}</div>`}).join('');
+      ${v.note?`<div class="note">${esc(v.note)}</div>`:''}${thumbsHtml(v,'vendors')}</div>`}).join('');
   const chip=(f,l)=>`<button class="chip" type="button" data-vf="${f}" aria-pressed="${state.vfilter===f}">${l}</button>`;
   return `<div class="view-h"><h2>廠商</h2><span>${V.length} 家</span></div>
     <section class="kpis num">
@@ -682,7 +730,7 @@ R.articles=()=>{
     return `<div class="vcard" role="button" tabindex="0" data-edit="articles:${esc(a.id)}">
       <div class="vtop"><b>${esc(a.title)}</b>${a.category?`<span class="tag cat">${esc(a.category)}</span>`:''}</div>
       ${url?`<div class="contact"><a href="${esc(url)}" target="_blank" rel="noopener">開啟文章 · ${esc(host(url))}</a></div>`:''}
-      ${a.note?`<div class="note">${esc(a.note)}</div>`:''}</div>`}).join('');
+      ${a.note?`<div class="note">${esc(a.note)}</div>`:''}${thumbsHtml(a,'articles')}</div>`}).join('');
   return `<div class="view-h"><h2>文章</h2></div>${seg}
     <div class="list">${cards||`<div class="empty">還沒有收藏的文章<br>看到好用的喜餅比較、婚紗心得，點右下角「收藏文章」存起來</div>`}</div>`;
 };
@@ -760,6 +808,7 @@ const FIELDS={
     {k:'urgency',t:'select',label:'急迫性',opts:()=>URGENCY},{k:'priority',t:'select',label:'優先等級',opts:()=>PRIORITY},
     {k:'cost',t:'number',label:'預估成本（元）'},{k:'actual',t:'number',label:'實際支出（元）'},
     {k:'note',t:'textarea',label:'備註',full:1,ph:'廠商聯絡方式、注意事項…'},
+    {k:'photos',t:'photos',label:'照片'},
     {k:'done',t:'check',label:'已完成',editOnly:1}
   ],
   vendors:[
@@ -769,13 +818,15 @@ const FIELDS={
     {k:'contact',t:'text',label:'聯絡人',max:30},{k:'phone',t:'tel',label:'電話',max:30},
     {k:'link',t:'text',label:'LINE ID 或網址',full:1,max:200,ph:'https://… 或 LINE ID'},
     {k:'quote',t:'number',label:'報價（元）'},{k:'deposit',t:'number',label:'已付訂金（元）'},
-    {k:'note',t:'textarea',label:'備註',full:1,ph:'方案內容、付款期限…'}
+    {k:'note',t:'textarea',label:'備註',full:1,ph:'方案內容、付款期限…'},
+    {k:'photos',t:'photos',label:'照片'}
   ],
   articles:[
     {k:'title',t:'text',label:'標題',req:1,full:1,max:100},
     {k:'url',t:'url',label:'網址',full:1,max:500,ph:'https://'},
     {k:'category',t:'select',label:'分類',opts:()=>ARTICLE_CATS,full:1},
-    {k:'note',t:'textarea',label:'筆記',full:1,ph:'重點整理…'}
+    {k:'note',t:'textarea',label:'筆記',full:1,ph:'重點整理…'},
+    {k:'photos',t:'photos',label:'照片'}
   ],
   settings:[
     {k:'weddingDate',t:'date',label:'婚禮日期',full:1},
@@ -784,10 +835,11 @@ const FIELDS={
   ]
 };
 const TITLES={tasks:['新增項目','編輯項目'],vendors:['新增廠商','編輯廠商'],articles:['收藏文章','編輯文章'],settings:['婚禮設定','婚禮設定']};
-let form={kind:null,item:null,seg:{},delArmed:false};
+let form={kind:null,item:null,seg:{},delArmed:false,photos:[],removed:[],busy:0};
 
 function fieldHtml(f,v,isEdit){
   if(f.editOnly&&!isEdit)return '';
+  if(f.t==='photos'){form.photos=(v||[]).map(p=>({...p}));form.removed=[];return `<div class="f full"><span class="lbl">${f.label}（最多 ${MAX_PHOTOS} 張）</span><div class="ph-grid" id="phGrid"></div></div>`}
   const id='f_'+f.k,lab=`${f.label}${f.req?' <em>*</em>':''}`,cls=`f ${f.full?'full':''}`;
   if(f.t==='seg'){form.seg[f.k]=v;return `<div class="f full"><span class="lbl">${lab}</span><div class="seg" data-segk="${f.k}">${f.opts().map(([val,l])=>`<button type="button" data-seg="${val}" aria-pressed="${val===v}">${l}</button>`).join('')}</div></div>`}
   if(f.t==='check')return `<label class="chk"><input type="checkbox" id="${id}" ${v?'checked':''}> ${f.label}</label>`;
@@ -804,12 +856,13 @@ function fieldHtml(f,v,isEdit){
   return `<div class="${cls}"><label for="${id}">${lab}</label><input type="${type}" id="${id}" ${extra} ${f.max?`maxlength="${f.max}"`:''} placeholder="${esc(f.ph||'')}" value="${esc(val)}" autocomplete="off"></div>`;
 }
 function openForm(kind,item,defaults){
-  const isEdit=!!item;form={kind,item:item||null,seg:{},delArmed:false};
+  const isEdit=!!item;form={kind,item:item||null,seg:{},delArmed:false,photos:[],removed:[],busy:0};
   const base=kind==='settings'?state.settings:(item||defaults||{});
   $('formTitle').textContent=TITLES[kind][isEdit?1:0];
   $('formBody').innerHTML=FIELDS[kind].map(f=>fieldHtml(f,base[f.k],isEdit)).join('')+
     (kind==='settings'?settingsExtra():'')+
     `<p class="err" id="fErr" hidden></p>`;
+  if($('phGrid'))renderPhotoGrid();
   $('delBtn').hidden=!(isEdit&&kind!=='settings');$('delBtn').textContent='刪除';$('delBtn').classList.remove('arm');
   $('scrim').hidden=false;document.body.style.overflow='hidden';
   const first=FIELDS[kind].find(f=>f.req&&f.t!=='seg');
@@ -824,18 +877,57 @@ function settingsExtra(){
   if(store.mode==='claude')return '';
   return `<p class="hint" style="grid-column:1/-1;margin:0">資料存在這支手機或這台電腦的瀏覽器裡；換裝置或清除瀏覽器資料就看不到了。</p>`;
 }
+function renderPhotoGrid(){
+  const g=$('phGrid');if(!g)return;
+  let h=form.photos.map((p,i)=>`<div class="ph"><img src="${esc(p.thumb)}" alt="照片 ${i+1}"><button type="button" data-rmph="${i}" aria-label="移除照片 ${i+1}">×</button></div>`).join('');
+  for(let i=0;i<form.busy;i++)h+=`<div class="ph-busy">處理中…</div>`;
+  if(form.photos.length+form.busy<MAX_PHOTOS)h+=`<label class="ph-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="15" rx="2"/><circle cx="12" cy="12.5" r="3.5"/><path d="M8 5l1.5-2h5L16 5"/></svg><span>加入照片</span><input type="file" id="phInput" accept="image/*" multiple aria-label="加入照片"></label>`;
+  g.innerHTML=h;
+}
+async function loadImg(file){
+  if(window.createImageBitmap){try{return await createImageBitmap(file,{imageOrientation:'from-image'})}catch{}}
+  return await new Promise((res,rej)=>{const u=URL.createObjectURL(file);const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(new Error('bad'));im.src=u});
+}
+function toJpeg(img,max,q){
+  const w0=img.naturalWidth||img.width,h0=img.naturalHeight||img.height,sc=Math.min(1,max/Math.max(w0,h0));
+  const c=document.createElement('canvas');c.width=Math.max(1,Math.round(w0*sc));c.height=Math.max(1,Math.round(h0*sc));
+  const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);
+  return c.toDataURL('image/jpeg',q);
+}
+async function processImage(file){
+  const img=await loadImg(file);
+  let full=toJpeg(img,1280,.8);
+  if(full.length>700000)full=toJpeg(img,1024,.7);
+  if(full.length>700000)full=toJpeg(img,800,.6);
+  return {full,thumb:toJpeg(img,200,.7)};
+}
+async function addPhotos(files){
+  const room=MAX_PHOTOS-form.photos.length-form.busy;
+  const list=[...files].filter(f=>/^image\//.test(f.type)||/\.(jpe?g|png|webp|gif|heic|heif)$/i.test(f.name)).slice(0,Math.max(0,room));
+  if(files.length>room)toast(`每筆最多 ${MAX_PHOTOS} 張，多的已略過`);
+  form.busy+=list.length;renderPhotoGrid();
+  for(const f of list){
+    try{const r=await processImage(f);form.photos.push({id:store.newId('photos'),thumb:r.thumb,full:r.full,isNew:true})}
+    catch{showErr(`「${f.name}」無法讀取，請改用 JPG 或 PNG 照片`)}
+    form.busy--;renderPhotoGrid();
+  }
+}
 function closeForm(){$('scrim').hidden=true;document.body.style.overflow='';form.kind=null}
 function showErr(m){$('fErr').textContent=m;$('fErr').hidden=false}
 function saveErrMsg(err){
   const c=err?.code;
   if(c==='permission_denied'||c==='not_granted')return '你目前只有檢視權限，無法儲存。請擁有者給你編輯權限。';
   if(c==='quota_exceeded')return '資料數量已達上限，請先刪除部分項目。';
+  if(c==='local_quota')return '這個瀏覽器的儲存空間不夠放照片了。請登入雲端版，或刪掉一些照片。';
   return '儲存失敗，請檢查網路後再試一次。';
 }
 $('formBody').addEventListener('change',e=>{
+  if(e.target.id==='phInput'){const fl=e.target.files;if(fl?.length)addPhotos(fl);return}
   const s=e.target;if(s.tagName==='SELECT'&&s.dataset.addnew){const w=$(s.id+'_wrap');w.hidden=s.value!==NEW;if(s.value===NEW)$(s.id+'_new').focus()}
 });
 $('formBody').addEventListener('click',async e=>{
+  const rm=e.target.closest('[data-rmph]');
+  if(rm){const [p]=form.photos.splice(+rm.dataset.rmph,1);if(p&&!p.isNew)form.removed.push(p);renderPhotoGrid();return}
   if(e.target.closest('[data-action="logout"]'))return logout();
   if(e.target.id==='migrateBtn'){
     e.target.disabled=true;e.target.textContent='上傳中…';
@@ -848,7 +940,9 @@ $('formBody').addEventListener('click',async e=>{
 $('form').onsubmit=async e=>{
   e.preventDefault();
   const {kind,item}=form,isEdit=!!item,out={};let optsChanged=false;
+  if(form.busy){showErr('照片還在處理中，請稍等一下');return}
   for(const f of FIELDS[kind]){
+    if(f.t==='photos')continue;
     if(f.editOnly&&!isEdit){out[f.k]=false;continue}
     const el=$('f_'+f.k);let v;
     if(f.t==='seg')v=form.seg[f.k]||'';
@@ -868,9 +962,14 @@ $('form').onsubmit=async e=>{
   try{
     if(optsChanged)await store.saveMeta('options');
     if(kind==='settings'){state.settings={...state.settings,...out};await store.saveMeta('settings');closeForm();toast('設定已儲存');render();return}
+    if(FIELDS[kind].some(f=>f.t==='photos')){
+      for(const p of form.photos.filter(p=>p.isNew)){await store.savePhoto(p.id,p.full);p.isNew=false;delete p.full}
+      out.photos=form.photos.map(p=>({id:p.id,thumb:p.thumb}));
+    }
     const now=new Date().toISOString();
     const obj={...(item||{}),...out,id:item?.id||store.newId(kind),createdAt:item?.createdAt||now,updatedAt:now};
     await store.save(kind,obj);
+    for(const p of form.removed)store.removePhoto(p.id).catch(()=>{});
     if(kind==='tasks'&&obj.stage!==state.stage&&state.view==='tasks'){state.stage=obj.stage;remember()}
     closeForm();toast(isEdit?'已更新':'已新增');render();
   }catch(err){showErr(saveErrMsg(err))}
@@ -878,7 +977,7 @@ $('form').onsubmit=async e=>{
 };
 $('delBtn').onclick=async()=>{
   if(!form.delArmed){form.delArmed=true;$('delBtn').textContent='確定刪除？';$('delBtn').classList.add('arm');return}
-  try{await store.remove(form.kind,form.item.id);closeForm();toast('已刪除')}catch(err){showErr(saveErrMsg(err))}
+  try{const ph=form.item.photos||[];await store.remove(form.kind,form.item.id);ph.forEach(p=>store.removePhoto(p.id).catch(()=>{}));closeForm();toast('已刪除')}catch(err){showErr(saveErrMsg(err))}
 };
 $('closeBtn').onclick=$('cancelBtn').onclick=closeForm;
 $('scrim').onclick=e=>{if(e.target===$('scrim'))closeForm()};
@@ -902,6 +1001,7 @@ document.addEventListener('click',async e=>{
   if(t.closest('a')||t.closest('#scrim'))return;
   const el=sel=>t.closest(sel);
   let x;
+  if(x=el('[data-photo]')){const [c,id,i]=x.dataset.photo.split(':');return openLightbox(c,id,+i)}
   if(x=el('[data-nav]'))return go(x.dataset.nav);
   if(x=el('[data-action="settings"]')){if(store.mode==='cloud'&&!state.user)return;return openForm('settings')}
   if(x=el('[data-action="login"]'))return login();
@@ -928,6 +1028,23 @@ document.addEventListener('click',async e=>{
     try{for(const k of state.tasks.filter(v=>v.sample))await store.remove('tasks',k.id);toast('已清除範例')}catch(err){toast(saveErrMsg(err))}
   }
 });
+/* ================= lightbox ================= */
+const fullCache={};let lb={list:[],i:0};
+function openLightbox(c,id,i){const it=state[c]?.find(v=>v.id===id);if(!it?.photos?.length)return;lb={list:it.photos,i};$('lightbox').hidden=false;document.body.style.overflow='hidden';showLb()}
+async function showLb(){
+  const p=lb.list[lb.i],multi=lb.list.length>1;
+  $('lbPrev').hidden=$('lbNext').hidden=!multi;$('lbCount').textContent=multi?`${lb.i+1} / ${lb.list.length}`:'';
+  $('lbImg').src=fullCache[p.id]||p.thumb;$('lbImg').alt=`照片 ${lb.i+1}`;
+  if(!fullCache[p.id]){try{const d=await store.getPhoto(p.id);if(d){fullCache[p.id]=d;if(lb.list[lb.i]?.id===p.id&&!$('lightbox').hidden)$('lbImg').src=d}}catch{}}
+}
+function closeLb(){$('lightbox').hidden=true;if($('scrim').hidden)document.body.style.overflow=''}
+function stepLb(d){lb.i=(lb.i+d+lb.list.length)%lb.list.length;showLb()}
+$('lbClose').onclick=closeLb;$('lbPrev').onclick=()=>stepLb(-1);$('lbNext').onclick=()=>stepLb(1);
+$('lightbox').addEventListener('click',e=>{if(e.target.id==='lightbox')closeLb()});
+document.addEventListener('keydown',e=>{if($('lightbox').hidden)return;if(e.key==='Escape')closeLb();if(e.key==='ArrowLeft')stepLb(-1);if(e.key==='ArrowRight')stepLb(1)});
+let lbX=null;$('lightbox').addEventListener('touchstart',e=>{lbX=e.touches[0].clientX},{passive:true});
+$('lightbox').addEventListener('touchend',e=>{if(lbX==null||lb.list.length<2)return;const dx=e.changedTouches[0].clientX-lbX;lbX=null;if(Math.abs(dx)>50)stepLb(dx<0?1:-1)});
+
 let toastT;
 function toast(m){const el=$('toast');el.textContent=m;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,2200)}
 
