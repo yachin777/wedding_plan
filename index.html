@@ -176,12 +176,12 @@ a{color:var(--red)}
 .day .xi{position:absolute;right:3px;top:1px;font-family:var(--serif);font-size:10px;color:var(--red);font-weight:700}
 .dots{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;padding-inline:2px}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--red);display:inline-block}
-.dot.due{background:var(--gold)}
+.dot.dl{background:var(--gold)}
 .dot.done{background:var(--ink-3)}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin-top:8px}
 .legend span{display:inline-flex;align-items:center;gap:5px}
 .lab{font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;background:var(--red-soft);color:var(--red);margin-right:6px;vertical-align:2px}
-.lab.due{background:var(--gold-soft);color:var(--gold)}
+.lab.dl{background:var(--gold-soft);color:var(--gold)}
 
 /* vendors / articles */
 .vcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;cursor:pointer}
@@ -202,6 +202,12 @@ a{color:var(--red)}
 .guide li{margin:3px 0}
 .guide p{margin:6px 0}
 .hint{font-size:12.5px;color:var(--ink-3);margin-top:10px}
+.login{margin-top:24px;text-align:center;padding:28px 18px}
+.login h2{font-family:var(--serif);margin:0 0 6px;font-size:22px}
+.login p{color:var(--ink-2);margin:0 0 16px}
+.acct{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--surface-2);border-radius:10px;padding:10px 12px;font-size:13px}
+.acct span{flex:1;min-width:0;overflow-wrap:anywhere}
+.acct .btn{padding:6px 12px;font-size:13px}
 
 /* budget */
 .meter{position:relative;height:14px;border-radius:7px;background:var(--surface-2);margin-top:4px}
@@ -294,6 +300,11 @@ a{color:var(--red)}
 </div>
 <div class="toast" id="toast" hidden></div>
 
+<!-- Firebase：雲端同步與登入。設定值放在 firebase-config.js -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script>
 /* ================= constants ================= */
 const STAGES=[{id:'proposal',name:'提親',step:'STEP 1'},{id:'engagement',name:'訂婚',step:'STEP 2'},{id:'wedding',name:'婚禮',step:'STEP 3'}];
@@ -319,7 +330,7 @@ const VIEWS=[
 
 /* ================= state & helpers ================= */
 const state={tasks:[],vendors:[],articles:[],opts:structuredClone(DEFAULT_OPTS),settings:{...DEFAULT_SETTINGS},
-  view:'overview',stage:'proposal',filter:'all',cat:'',vfilter:'all',aseg:'guide',calMonth:'',calDay:'',ready:false};
+  view:'overview',stage:'proposal',filter:'all',cat:'',vfilter:'all',aseg:'guide',calMonth:'',calDay:'',ready:false,user:null,authError:''};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
@@ -346,35 +357,72 @@ function remember(){try{localStorage.setItem('wp-view',state.view);localStorage.
 /* ================= storage: shared db when available, otherwise this browser ================= */
 const COLS=['tasks','vendors','articles'];
 const store={
-  db:null,
+  db:null,mode:'local',fs:null,unsubs:[],
   async init(){
     let db=null;
     try{ if(window.claude?.use) db=await window.claude.use('db'); }catch{}
-    if(db){
-      this.db=db;
-      const pending=new Set(COLS);
-      for(const c of COLS){
-        db.collection(c).onSnapshot(snap=>{
-          state[c]=snap.docs.map(d=>({id:d.id,...d.data()}));
-          pending.delete(c);if(!pending.size)state.ready=true;render();
-        },()=>toast('與資料庫的連線中斷，請重新整理頁面'));
-      }
-      db.doc('meta/options').onSnapshot(s=>{
-        const d=s.exists?s.data():null;
-        if(d){state.opts={categories:d.categories?.length?[...d.categories]:[...DEFAULT_OPTS.categories],people:d.people?.length?[...d.people]:[...DEFAULT_OPTS.people]};render()}
-      },()=>{});
-      db.doc('meta/settings').onSnapshot(s=>{if(s.exists){state.settings={...DEFAULT_SETTINGS,...s.data()};render()}},()=>{});
-    }else{
-      try{const raw=JSON.parse(localStorage.getItem('wp-local')||'null');
-        if(raw){for(const c of COLS)state[c]=raw[c]||[];if(raw.opts)state.opts=raw.opts;if(raw.settings)state.settings={...DEFAULT_SETTINGS,...raw.settings}}}catch{}
-      state.ready=true;render();
+    if(db){this.mode='claude';this.attach(db);return}
+    const cfg=window.FIREBASE_CONFIG;
+    if(cfg&&cfg.apiKey&&window.firebase){
+      this.mode='cloud';
+      try{
+        firebase.initializeApp(cfg);
+        this.fs=firebase.firestore();
+        this.fs.enablePersistence({synchronizeTabs:true}).catch(()=>{});
+        const auth=firebase.auth();
+        auth.getRedirectResult().catch(e=>{state.authError=authMsg(e);render()});
+        auth.onAuthStateChanged(u=>{
+          this.detach();resetData();
+          state.user=u?{email:u.email||'',name:u.displayName||''}:null;
+          state.authError='';
+          if(u){state.ready=false;this.attach(this.fs)}else state.ready=true;
+          render();
+        });
+      }catch(e){state.authError='Firebase 設定有誤：'+e.message;state.ready=true;render()}
+      return;
     }
+    try{const raw=JSON.parse(localStorage.getItem('wp-local')||'null');
+      if(raw){for(const c of COLS)state[c]=raw[c]||[];if(raw.opts)state.opts=raw.opts;if(raw.settings)state.settings={...DEFAULT_SETTINGS,...raw.settings}}}catch{}
+    state.ready=true;render();
+  },
+  attach(db){
+    this.db=db;
+    const pending=new Set(COLS);
+    const fail=e=>{
+      if(e&&(e.code==='permission-denied'||e.code==='permission_denied'))state.authError=`這個帳號（${state.user?.email||''}）沒有權限查看資料。請確認擁有者已把這個 Email 加進 Firebase 的安全規則。`;
+      else toast('與資料庫的連線中斷，請重新整理頁面');
+      state.ready=true;render();
+    };
+    for(const c of COLS){
+      this.unsubs.push(db.collection(c).onSnapshot(snap=>{
+        state[c]=snap.docs.map(d=>({id:d.id,...d.data()}));
+        pending.delete(c);if(!pending.size)state.ready=true;render();
+      },fail));
+    }
+    this.unsubs.push(db.doc('meta/options').onSnapshot(s=>{
+      const d=s.exists?s.data():null;
+      if(d){state.opts={categories:d.categories?.length?[...d.categories]:[...DEFAULT_OPTS.categories],people:d.people?.length?[...d.people]:[...DEFAULT_OPTS.people]};render()}
+    },()=>{}));
+    this.unsubs.push(db.doc('meta/settings').onSnapshot(s=>{if(s.exists){state.settings={...DEFAULT_SETTINGS,...s.data()};render()}},()=>{}));
+  },
+  detach(){this.unsubs.forEach(f=>{try{f()}catch{}});this.unsubs=[];this.db=null},
+  localBackup(){try{const raw=JSON.parse(localStorage.getItem('wp-local')||'null');if(!raw)return null;const n=COLS.reduce((a,c)=>a+(raw[c]?.length||0),0);return n?{raw,n}:null}catch{return null}},
+  async migrate(){
+    const b=this.localBackup();if(!b||!this.db)return 0;
+    const batch=this.fs.batch();let n=0;
+    for(const c of COLS)for(const it of (b.raw[c]||[])){const {id,...body}=it;batch.set(this.fs.collection(c).doc(id||this.newId(c)),body);n++}
+    if(b.raw.settings&&!state.settings.weddingDate&&!state.settings.budget)batch.set(this.fs.doc('meta/settings'),{...DEFAULT_SETTINGS,...b.raw.settings});
+    if(b.raw.opts)batch.set(this.fs.doc('meta/options'),{categories:[...new Set([...state.opts.categories,...(b.raw.opts.categories||[])])],people:[...new Set([...state.opts.people,...(b.raw.opts.people||[])])]});
+    await batch.commit();
+    try{localStorage.setItem('wp-local-uploaded',localStorage.getItem('wp-local'));localStorage.removeItem('wp-local')}catch{}
+    return n;
   },
   newId(c){return this.db?this.db.collection(c).doc().id:c[0]+Date.now().toString(36)+Math.random().toString(36).slice(2,6)},
   persistLocal(){try{localStorage.setItem('wp-local',JSON.stringify({tasks:state.tasks,vendors:state.vendors,articles:state.articles,opts:state.opts,settings:state.settings}))}catch{toast('這個瀏覽器無法儲存資料')}},
   async save(c,item){
     const {id,...body}=item;
     if(this.db){await this.db.collection(c).doc(id).set(body);return}
+    if(this.mode!=='local')throw {code:'permission_denied'};
     const list=state[c],i=list.findIndex(t=>t.id===id);
     if(i>=0)list[i]=item;else list.push(item);
     this.persistLocal();render();
@@ -389,6 +437,25 @@ const store={
     this.persistLocal();render();
   }
 };
+
+function resetData(){for(const c of COLS)state[c]=[];state.opts=structuredClone(DEFAULT_OPTS);state.settings={...DEFAULT_SETTINGS}}
+function authMsg(e){
+  const c=e?.code||'';
+  if(c==='auth/unauthorized-domain')return '這個網址還沒加到 Firebase 的「授權網域」，請到 Firebase 主控台 → Authentication → 設定 → 授權網域加入 '+location.hostname;
+  if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request')return '';
+  if(c==='auth/network-request-failed')return '網路連線失敗，請稍後再試。';
+  return '登入失敗：'+(e?.message||c);
+}
+async function login(){
+  const auth=firebase.auth(),p=new firebase.auth.GoogleAuthProvider();
+  p.setCustomParameters({prompt:'select_account'});
+  try{await auth.signInWithPopup(p)}
+  catch(e){
+    if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/web-storage-unsupported'].includes(e.code))return auth.signInWithRedirect(p);
+    state.authError=authMsg(e);render();
+  }
+}
+async function logout(){closeForm();state.authError='';await firebase.auth().signOut()}
 
 /* ================= stats ================= */
 function stats(list){
@@ -492,18 +559,18 @@ R.calendar=()=>{
   for(let i=0;i<lead;i++)cells+=`<div class="day blank"></div>`;
   for(let d=1;d<=days;d++){
     const ds=`${state.calMonth}-${pad(d)}`,list=ev[ds]||[];
-    const dots=list.slice(0,4).map(e=>`<i class="dot ${e.task.done?'done':e.kind==='due'?'due':''}"></i>`).join('');
+    const dots=list.slice(0,4).map(e=>`<i class="dot ${e.task.done?'done':e.kind==='due'?'dl':''}"></i>`).join('');
     const wed=ds===state.settings.weddingDate;
     cells+=`<button type="button" class="day ${ds===t?'today':''} ${wed?'wedding':''}" data-day="${ds}" aria-pressed="${ds===state.calDay}" aria-label="${m}月${d}日，${list.length} 項">
       ${wed?'<span class="xi">囍</span>':''}<span class="dn num">${d}</span><span class="dots">${dots}</span></button>`;
   }
   const sel=state.calDay;
   const acts=state.tasks.filter(k=>k.date===sel),dues=state.tasks.filter(k=>k.due===sel&&k.date!==sel);
-  const items=[...acts.map(k=>card(k,'<span class="lab">活動</span>')),...dues.map(k=>card(k,'<span class="lab due">期限</span>'))].join('');
+  const items=[...acts.map(k=>card(k,'<span class="lab">活動</span>')),...dues.map(k=>card(k,'<span class="lab dl">期限</span>'))].join('');
   return `<div class="view-h"><h2>月曆</h2><span>點日期看當天安排</span></div>
     <div class="cal-h"><button type="button" data-cal="prev" aria-label="上個月">‹</button><b class="num">${y} 年 ${m} 月</b><button type="button" data-cal="next" aria-label="下個月">›</button><button type="button" data-cal="today">今天</button></div>
     <div class="cal">${cells}</div>
-    <div class="legend"><span><i class="dot"></i>活動日期</span><span><i class="dot due"></i>最後期限</span><span><i class="dot done"></i>已完成</span>${state.settings.weddingDate?'<span><b style="color:var(--red);font-family:var(--serif)">囍</b>婚禮日</span>':''}</div>
+    <div class="legend"><span><i class="dot"></i>活動日期</span><span><i class="dot dl"></i>最後期限</span><span><i class="dot done"></i>已完成</span>${state.settings.weddingDate?'<span><b style="color:var(--red);font-family:var(--serif)">囍</b>婚禮日</span>':''}</div>
     <div class="sec-h">${fmtDate(sel)}${sel===state.settings.weddingDate?' · 婚禮日':''}</div>
     <div class="list" style="margin-top:0">${items||`<div class="empty" style="padding:16px">這天沒有安排</div>`}</div>`;
 };
@@ -628,7 +695,7 @@ R.budget=()=>{
   const meter=`<div class="meter" role="img" aria-label="實際 ${money(all.actual)}，預估 ${money(all.cost)}，總預算 ${money(b)}">
       <i class="e" style="width:${pctW(all.cost)}" title="預估 ${money(all.cost)}"></i><i class="a" style="width:${pctW(all.actual)}" title="實際 ${money(all.actual)}"></i>
       ${b?`<span class="cap" style="left:calc(${pctW(b)} - 1px)" title="總預算 ${money(b)}"></span>`:''}</div>
-    <div class="mlab num"><span>實際 ${money(all.actual)}</span><span>預估 ${money(all.cost)}</span><span>${b?'｜ 預算 '+money(b):'未設定預算'}</span></div>
+    <div class="mlab num"><span>實際 ${money(all.actual)}</span><span>預估 ${money(all.cost)}</span><span>${b?'總預算 '+money(b):'未設定預算'}</span></div>
     ${over?`<div class="warnline">預估花費超出預算 ${money(all.cost-b)}</div>`:''}`;
   const groupRows=groups=>{
     const mx=Math.max(1,...groups.map(g=>Math.max(g.e,g.a)));
@@ -669,6 +736,14 @@ function render(){
   if(s.weddingDate){const d=dayDiff(s.weddingDate,todayStr());parts.push(d>0?`婚禮倒數 ${d} 天`:d===0?'今天結婚':fmtDate(s.weddingDate))}
   $('subline').innerHTML=parts.join(' · ')||'提親 → 訂婚 → 婚禮';
   $('tabbar').innerHTML=VIEWS.map(v=>`<button class="tab" type="button" data-nav="${v.id}" ${v.id===state.view?'aria-current="page"':''}>${v.icon}<span>${v.name}</span></button>`).join('');
+  const gate=store.mode==='cloud'&&(!state.user||state.authError);
+  document.querySelector('.tabbar').hidden=!!gate;
+  if(gate){
+    $('view').innerHTML=state.authError
+      ?`<section class="card login"><h2>無法開啟資料</h2><p>${esc(state.authError)}</p>${state.user?'<button class="btn" type="button" data-action="logout">換一個帳號登入</button>':'<button class="btn primary" type="button" data-action="login">用 Google 登入</button>'}</section>`
+      :`<section class="card login"><h2>登入後開始使用</h2><p>用 Google 帳號登入，你和另一半會看到同一份資料，任何一方新增或修改，對方馬上就會看到。</p><button class="btn primary" type="button" data-action="login">用 Google 登入</button><p class="hint">只有擁有者允許的 Email 可以查看與編輯。</p></section>`;
+    $('fab').hidden=true;return;
+  }
   $('view').innerHTML=state.ready?R[state.view]():'<div class="empty" style="margin-top:16px">載入中…</div>';
   const f=FAB[state.view];$('fab').hidden=!f;if(f)$('fabLabel').textContent=f[0];
 }
@@ -733,12 +808,21 @@ function openForm(kind,item,defaults){
   const base=kind==='settings'?state.settings:(item||defaults||{});
   $('formTitle').textContent=TITLES[kind][isEdit?1:0];
   $('formBody').innerHTML=FIELDS[kind].map(f=>fieldHtml(f,base[f.k],isEdit)).join('')+
-    (kind==='settings'&&!store.db?`<p class="hint" style="grid-column:1/-1;margin:0">資料存在這支手機或這台電腦的瀏覽器裡；換裝置或清除瀏覽器資料就看不到了。</p>`:'')+
+    (kind==='settings'?settingsExtra():'')+
     `<p class="err" id="fErr" hidden></p>`;
   $('delBtn').hidden=!(isEdit&&kind!=='settings');$('delBtn').textContent='刪除';$('delBtn').classList.remove('arm');
   $('scrim').hidden=false;document.body.style.overflow='hidden';
   const first=FIELDS[kind].find(f=>f.req&&f.t!=='seg');
   if(!isEdit&&first)setTimeout(()=>$('f_'+first.k)?.focus(),60);
+}
+function settingsExtra(){
+  if(store.mode==='cloud'&&state.user){
+    const b=store.localBackup();
+    return `<div class="acct"><span>已登入：${esc(state.user.email)}<br><small style="color:var(--ink-3)">資料存在雲端，和另一半即時同步</small></span><button class="btn" type="button" data-action="logout">登出</button></div>`+
+      (b?`<div class="acct"><span>這台裝置上有 ${b.n} 筆之前存在瀏覽器裡的資料，還沒放到雲端。</span><button class="btn primary" type="button" id="migrateBtn">上傳到雲端</button></div>`:'');
+  }
+  if(store.mode==='claude')return '';
+  return `<p class="hint" style="grid-column:1/-1;margin:0">資料存在這支手機或這台電腦的瀏覽器裡；換裝置或清除瀏覽器資料就看不到了。</p>`;
 }
 function closeForm(){$('scrim').hidden=true;document.body.style.overflow='';form.kind=null}
 function showErr(m){$('fErr').textContent=m;$('fErr').hidden=false}
@@ -751,7 +835,13 @@ function saveErrMsg(err){
 $('formBody').addEventListener('change',e=>{
   const s=e.target;if(s.tagName==='SELECT'&&s.dataset.addnew){const w=$(s.id+'_wrap');w.hidden=s.value!==NEW;if(s.value===NEW)$(s.id+'_new').focus()}
 });
-$('formBody').addEventListener('click',e=>{
+$('formBody').addEventListener('click',async e=>{
+  if(e.target.closest('[data-action="logout"]'))return logout();
+  if(e.target.id==='migrateBtn'){
+    e.target.disabled=true;e.target.textContent='上傳中…';
+    try{const n=await store.migrate();closeForm();toast(`已上傳 ${n} 筆資料到雲端`)}catch(err){showErr('上傳失敗：'+(err?.message||'請稍後再試'));e.target.disabled=false;e.target.textContent='上傳到雲端'}
+    return;
+  }
   const b=e.target.closest('[data-seg]');if(!b)return;const k=b.parentElement.dataset.segk;form.seg[k]=b.dataset.seg;
   b.parentElement.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
 });
@@ -813,7 +903,9 @@ document.addEventListener('click',async e=>{
   const el=sel=>t.closest(sel);
   let x;
   if(x=el('[data-nav]'))return go(x.dataset.nav);
-  if(x=el('[data-action="settings"]'))return openForm('settings');
+  if(x=el('[data-action="settings"]')){if(store.mode==='cloud'&&!state.user)return;return openForm('settings')}
+  if(x=el('[data-action="login"]'))return login();
+  if(x=el('[data-action="logout"]'))return logout();
   if(x=el('[data-goto-stage]')){state.stage=x.dataset.gotoStage;state.cat='';return go('tasks')}
   if(x=el('[data-stage]')){state.stage=x.dataset.stage;state.cat='';remember();return render()}
   if(x=el('[data-f]')){state.filter=x.dataset.f;return render()}
