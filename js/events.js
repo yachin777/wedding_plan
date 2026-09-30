@@ -18,7 +18,13 @@ $('fab').onclick=()=>{
   else{state.aseg='saved';render();openForm('articles',null,{})}
 };
 // 任務頁的類別篩選
-document.addEventListener('change',e=>{if(e.target.id==='catFilter'){state.cat=e.target.value;render()}});
+document.addEventListener('change',e=>{
+  if(e.target.id==='catFilter'){state.cat=e.target.value;render()}
+  // 甘特圖：日期區間與排序
+  if(e.target.id==='gFrom'){state.gantt.from=e.target.value;render()}
+  if(e.target.id==='gTo'){state.gantt.to=e.target.value;render()}
+  if(e.target.id==='gSort'){state.gantt.sort=e.target.value;render()}
+});
 // 整個頁面的點擊：依被點元素上的 data-* 屬性決定動作
 //   data-nav 切換分頁、data-edit 打開編輯、data-toggle 勾選完成、data-photo 放大照片、data-day 選日期…
 let clearArmed=false;
@@ -36,6 +42,8 @@ document.addEventListener('click',async e=>{
   if(x=el('[data-goto-stage]')){state.stage=x.dataset.gotoStage;state.cat='';return go('tasks')}
   if(x=el('[data-stage]')){state.stage=x.dataset.stage;state.cat='';remember();return render()}
   if(x=el('[data-f]')){state.filter=x.dataset.f;return render()}
+  // 甘特圖的篩選按鈕：data-g="stage:wedding"、"status:open"、"reset:1"
+  if(x=el('[data-g]')){const [k,v]=x.dataset.g.split(':');if(k==='reset')state.gantt={...state.gantt,stage:'all',status:'all',from:'',to:''};else state.gantt[k]=v;return render()}
   if(x=el('[data-vf]')){state.vfilter=x.dataset.vf;return render()}
   if(x=el('[data-aseg]')){state.aseg=x.dataset.aseg;return render()}
   if(x=el('[data-day]')){state.calDay=x.dataset.day;return render()}

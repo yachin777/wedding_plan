@@ -34,5 +34,6 @@ const VIEWS=[
   {id:'tasks',name:'任務',icon:I('<path d="M10 6h10M10 12h10M10 18h10"/><path d="M3.5 6l1.5 1.5L7.5 5M3.5 12l1.5 1.5L7.5 11M3.5 18l1.5 1.5L7.5 17"/>')},
   {id:'vendors',name:'廠商',icon:I('<path d="M4 9l1.2-5h13.6L20 9M4 9v11h16V9M4 9h16M9.5 20v-6h5v6"/>')},
   {id:'articles',name:'文章',icon:I('<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19M9 7.5h6M9 11h6"/>')},
+  {id:'gantt',name:'甘特圖',icon:I('<path d="M4 4v16h16"/><path d="M7 7h6M9 11h8M8 15h5"/>')},
   {id:'budget',name:'預算',icon:I('<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10.5h18M15.5 15h2.5M7 3.5h10"/>')}
 ];

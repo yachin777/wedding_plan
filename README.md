@@ -27,6 +27,7 @@ wedding_plan/
    │  ├─ tasks.js        任務
    │  ├─ vendors.js      廠商
    │  ├─ articles.js     文章（含禮俗指南內容）
+   │  ├─ gantt.js        甘特圖
    │  └─ budget.js       預算
    ├─ render.js          重畫畫面
    ├─ form.js            新增／編輯表單
@@ -49,6 +50,9 @@ wedding_plan/
 | 某個分頁的畫面 | `js/views/` 裡對應的檔案 |
 | 禮俗指南的文字 | `js/views/articles.js` 的 `GUIDE` |
 | 每筆資料最多幾張照片 | `js/constants.js` 的 `MAX_PHOTOS` |
+| 甘特圖長條顏色 | `js/views/gantt.js` 的 `GANTT_COLORS`、`css/base.css` 的 `--g-mid` |
+| 側邊欄寬度 | `css/base.css` 的 `--side` |
+| 左上角印章字 | `index.html` 有兩處（手機頁首、電腦側邊欄）都要改 |
 
 ## 注意
 

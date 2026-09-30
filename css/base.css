@@ -14,6 +14,7 @@ html{color-scheme:light}
   --red:#B32F37; --red-soft:#F7E1E1; --gold:#9C7A2E; --gold-soft:#F4EAD2;
   --ok:#2F7A55; --ok-soft:#DDEFE5; --warn:#A8620F; --warn-soft:#FAE9D2;
   --est:#D9C3C5;
+  --g-mid:#C98A97;   /* 甘特圖「訂婚」長條顏色 */
   --shadow:0 1px 2px rgba(60,20,30,.06),0 4px 16px rgba(60,20,30,.06);
   --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
   --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
@@ -28,6 +29,7 @@ html{color-scheme:light}
     --red:#E46A70; --red-soft:#3E2226; --gold:#D6B460; --gold-soft:#3A3020;
     --ok:#6CC596; --ok-soft:#1E3429; --warn:#E6A454; --warn-soft:#3A2B18;
     --est:#5A4449;
+    --g-mid:#C07F8C;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
   }
 }
@@ -38,6 +40,7 @@ html{color-scheme:light}
   --red:#E46A70; --red-soft:#3E2226; --gold:#D6B460; --gold-soft:#3A3020;
   --ok:#6CC596; --ok-soft:#1E3429; --warn:#E6A454; --warn-soft:#3A2B18;
   --est:#5A4449;
+  --g-mid:#C07F8C;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
 }
 *{box-sizing:border-box}

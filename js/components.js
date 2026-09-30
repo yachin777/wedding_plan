@@ -31,6 +31,7 @@ function card(t,label){
   const time=t.start?`${t.start}${t.end?'–'+t.end:''}`:'';
   const facts=[
     t.date?`<span>活動 ${fmtDate(t.date)}${time?' '+time:''}</span>`:(time?`<span>${time}</span>`:''),
+    t.startDate?`<span>開始 ${fmtDate(t.startDate)}</span>`:'',
     t.due?`<span>期限 ${fmtDate(t.due)}</span>`:'',
     t.owner?`<span>負責：${esc(t.owner)}</span>`:'',
     t.cost?`<span>預估 ${money(t.cost)}</span>`:'',

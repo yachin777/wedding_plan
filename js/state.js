@@ -9,7 +9,9 @@
 //   view = 目前分頁；stage = 任務頁選的階段；filter/cat/vfilter/aseg = 各頁的篩選
 //   calMonth/calDay = 月曆顯示的月份與選取的日期；user = 登入的帳號
 const state={tasks:[],vendors:[],articles:[],opts:structuredClone(DEFAULT_OPTS),settings:{...DEFAULT_SETTINGS},
-  view:'overview',stage:'proposal',filter:'all',cat:'',vfilter:'all',aseg:'guide',calMonth:'',calDay:'',ready:false,user:null,authError:''};
+  view:'overview',stage:'proposal',filter:'all',cat:'',vfilter:'all',aseg:'guide',calMonth:'',calDay:'',
+  gantt:{stage:'all',status:'all',from:'',to:'',sort:'date'},   // 甘特圖的篩選與排序
+  ready:false,user:null,authError:''};
 // 還原上次停留的分頁與階段
 try{const v=localStorage.getItem('wp-view');if(VIEWS.some(x=>x.id===v))state.view=v;
   const s=localStorage.getItem('wp-stage');if(STAGES.some(x=>x.id===s))state.stage=s}catch{}

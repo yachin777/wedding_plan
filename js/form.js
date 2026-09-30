@@ -13,7 +13,8 @@ const FIELDS={
     {k:'item',t:'text',label:'項目',req:1,full:1,max:80,ph:'例如：預訂訂婚喜餅'},
     {k:'category',t:'select',label:'類別',opts:()=>state.opts.categories,addNew:'categories',newLabel:'新增類別'},
     {k:'owner',t:'select',label:'負責處理人',opts:()=>state.opts.people,addNew:'people',newLabel:'新增負責人'},
-    {k:'date',t:'date',label:'活動日期'},{k:'due',t:'date',label:'最後期限'},
+    {k:'startDate',t:'date',label:'開始日期'},{k:'due',t:'date',label:'最後期限'},   // 甘特圖用這兩個日期畫長條
+    {k:'date',t:'date',label:'活動日期',full:1},
     {k:'start',t:'time',label:'開始時間'},{k:'end',t:'time',label:'結束時間'},
     {k:'urgency',t:'select',label:'急迫性',opts:()=>URGENCY},{k:'priority',t:'select',label:'優先等級',opts:()=>PRIORITY},
     {k:'cost',t:'number',label:'預估成本（元）'},{k:'actual',t:'number',label:'實際支出（元）'},

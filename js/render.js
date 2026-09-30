@@ -4,7 +4,7 @@
 // ==========================================================
 
 // 右下角「新增」按鈕在各分頁顯示的文字，以及要新增哪一種資料（null = 不顯示按鈕）
-const FAB={overview:['新增項目','tasks'],calendar:['新增項目','tasks'],tasks:['新增項目','tasks'],vendors:['新增廠商','vendors'],articles:['收藏文章','articles'],budget:null};
+const FAB={overview:['新增項目','tasks'],calendar:['新增項目','tasks'],tasks:['新增項目','tasks'],vendors:['新增廠商','vendors'],articles:['收藏文章','articles'],gantt:['新增項目','tasks'],budget:null};
 // 重畫整個畫面：頁首、分頁列、目前分頁內容、右下角按鈕。
 // 沒登入時顯示登入畫面。
 function render(){

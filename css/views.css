@@ -151,3 +151,43 @@
   .hero .days{font-size:52px}
   .guide{max-width:760px}
 }
+
+/* ---------- 甘特圖 ---------- */
+.g-tools{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:12px;font-size:13px;color:var(--ink-2)}
+.g-tools label{display:inline-flex;align-items:center;gap:6px}
+.g-tools input,.g-tools select{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:5px 8px;font-size:14px;min-height:34px}
+.g-tools .btn{padding:6px 12px;font-size:13px}
+.g-legend{margin-top:12px}
+.g-key{width:14px;height:8px;border-radius:2px;display:inline-block}
+.g-key.done{background:var(--ink-3);opacity:.5}
+.g-key.late{background:transparent;border:2px solid var(--red)}
+.g-key.today{width:2px;height:12px;background:var(--red)}
+.g-key.wed{width:2px;height:12px;background:var(--gold)}
+/* 外框：左右可捲動 */
+.g-scroll{margin-top:12px;overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);-webkit-overflow-scrolling:touch}
+.gantt{--g-name-w:180px;display:grid;position:relative;min-width:min-content}
+@media (max-width:600px){.gantt{--g-name-w:112px}}
+/* 左上角與左側任務名稱：往右捲動時固定在左邊 */
+.g-corner,.g-name{position:sticky;left:0;z-index:2;background:var(--surface);border-right:1px solid var(--line)}
+.g-corner{grid-column:1;display:flex;align-items:flex-end;padding:0 12px 6px;font-size:12px;color:var(--ink-3);border-bottom:1px solid var(--line)}
+.g-name{grid-column:1;display:flex;align-items:center;gap:8px;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--surface-2);padding:0 12px;height:40px;text-align:left;font-size:13.5px;min-width:0;cursor:pointer}
+.g-name span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.g-name:hover{background:var(--surface-2)}
+.g-dot{flex:none;width:8px;height:8px;border-radius:50%}
+.g-group{grid-column:1/-1;position:sticky;left:0;padding:8px 12px 4px;font-size:12px;font-weight:700;color:var(--ink-2);background:var(--bg);border-bottom:1px solid var(--line)}
+/* 日期軸 */
+.g-axis{grid-column:2;position:relative;height:48px;border-bottom:1px solid var(--line)}
+.g-month{position:absolute;top:6px;padding-left:4px;font-size:12px;font-weight:700;color:var(--ink);white-space:nowrap;border-left:1px solid var(--line)}
+.g-ticks{position:absolute;left:0;right:0;bottom:4px;height:18px}
+.g-tick{position:absolute;text-align:center;font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.g-tick.we{color:var(--red)}
+/* 每一列的軌道＋格線 */
+.g-track{grid-column:2;position:relative;height:40px;border-bottom:1px solid var(--surface-2);
+  background-image:repeating-linear-gradient(to right,var(--surface-2) 0 1px,transparent 1px var(--gs))}
+.g-bar{z-index:2;position:absolute;top:10px;height:20px;border:0;border-radius:5px;background:var(--c);color:#fff;font-size:11px;font-weight:700;padding:0 6px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;cursor:pointer;font-variant-numeric:tabular-nums;box-shadow:0 0 0 2px var(--surface)}
+.g-bar:hover{filter:brightness(1.08)}
+.g-bar.done{opacity:.45}
+.g-bar.late{outline:2px solid var(--red);outline-offset:1px}
+/* 今天、婚禮日的垂直線 */
+.g-today,.g-wed{position:absolute;top:0;bottom:0;width:2px;background:var(--red);opacity:.7;pointer-events:none;z-index:1}
+.g-wed{background:var(--gold)}
