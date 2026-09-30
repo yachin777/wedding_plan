@@ -1,0 +1,50 @@
+/* ==========================================================
+   css/base.css
+   基本樣式：顏色主題（淺色／深色）、字型、共用設定。
+   想換整體配色，改 :root 裡的顏色變數即可。
+   ========================================================== */
+
+html{color-scheme:light}
+:root{padding-top:env(safe-area-inset-top,0px)}
+[hidden]{display:none!important}
+/* 淺色主題的顏色（想換配色改這裡；深色主題在下面兩段） */
+:root{
+  --bg:#FAF7F6; --surface:#FFFFFF; --surface-2:#F4ECEA; --line:#E7DAD8;
+  --ink:#2A1F23; --ink-2:#6E5C62; --ink-3:#9A8A8F;
+  --red:#B32F37; --red-soft:#F7E1E1; --gold:#9C7A2E; --gold-soft:#F4EAD2;
+  --ok:#2F7A55; --ok-soft:#DDEFE5; --warn:#A8620F; --warn-soft:#FAE9D2;
+  --est:#D9C3C5;
+  --shadow:0 1px 2px rgba(60,20,30,.06),0 4px 16px rgba(60,20,30,.06);
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --side:236px;   /* 側邊欄寬度 */
+}
+/* 深色主題：手機／電腦設為深色模式時自動套用 */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#171214; --surface:#221A1D; --surface-2:#2C2226; --line:#3A2E33;
+    --ink:#F2E9EA; --ink-2:#C2B2B6; --ink-3:#8E7E83;
+    --red:#E46A70; --red-soft:#3E2226; --gold:#D6B460; --gold-soft:#3A3020;
+    --ok:#6CC596; --ok-soft:#1E3429; --warn:#E6A454; --warn-soft:#3A2B18;
+    --est:#5A4449;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#171214; --surface:#221A1D; --surface-2:#2C2226; --line:#3A2E33;
+  --ink:#F2E9EA; --ink-2:#C2B2B6; --ink-3:#8E7E83;
+  --red:#E46A70; --red-soft:#3E2226; --gold:#D6B460; --gold-soft:#3A3020;
+  --ok:#6CC596; --ok-soft:#1E3429; --warn:#E6A454; --warn-soft:#3A2B18;
+  --est:#5A4449;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--red)}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:0 calc(96px + env(safe-area-inset-bottom,0px))}
