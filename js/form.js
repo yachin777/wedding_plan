@@ -26,7 +26,7 @@ const FIELDS={
   vendors:[
     {k:'name',t:'text',label:'廠商名稱',req:1,full:1,max:60,ph:'例如：○○婚宴會館'},
     {k:'category',t:'select',label:'類別',opts:()=>state.opts.categories,addNew:'categories',newLabel:'新增類別'},
-    {k:'status',t:'select',label:'狀態',opts:()=>VENDOR_STATUS,noBlank:1},
+    {k:'status',t:'select',label:'狀態',opts:()=>VENDOR_STATUS,noBlank:0},
     {k:'contact',t:'text',label:'聯絡人',max:30},{k:'phone',t:'tel',label:'電話',max:30},
     {k:'social',t:'text',label:'LINE ID 或 IG 名稱',full:1,max:60,ph:'例如：@weddinghall 或 ig: wedding_studio'},
     {k:'website',t:'url',label:'網址',full:1,max:300,ph:'https://'},
