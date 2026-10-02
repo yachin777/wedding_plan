@@ -3,6 +3,11 @@
 // 「廠商」分頁：廠商統計、狀態篩選、廠商卡片。
 // ==========================================================
 
+// 舊版只有一個「LINE ID 或網址」欄位（link），這裡把它拆成 social（LINE／IG）和 website（網址）
+function normVendor(v){
+  if(!v.link||v.social||v.website)return v;
+  return safeUrl(v.link)?{...v,website:v.link}:{...v,social:v.link};
+}
 // 優點／缺點：每一行顯示成一點，優點綠色＋、缺點紅色－
 function prosCons(v){
   const list=(txt,cls,sign)=>String(txt||'').split('\n').map(s=>s.trim()).filter(Boolean)
@@ -19,19 +24,20 @@ R.vendors=()=>{
   const rank={'已簽約':0,'詢價中':1,'不考慮':2};
   list.sort((a,b)=>((rank[a.status]??3)-(rank[b.status]??3))||String(a.category||'').localeCompare(String(b.category||''))||String(a.name).localeCompare(String(b.name)));
   const stCls={'已簽約':'st-ok','詢價中':'st-wait','不考慮':'st-no'};
-  const cards=list.map(v=>{
-    const url=safeUrl(v.link);
+  const cards=list.map(v0=>{
+    const v=normVendor(v0),url=safeUrl(v.website);
     const contact=[
       v.contact?`<span>${esc(v.contact)}</span>`:'',
       v.phone?`<a href="tel:${esc(String(v.phone).replace(/[^\d+]/g,''))}">${esc(v.phone)}</a>`:'',
-      v.link?(url?`<a href="${esc(url)}" target="_blank" rel="noopener">${esc(host(url)||'網站')}</a>`:`<span>LINE：${esc(v.link)}</span>`):''
+      v.social?`<span>LINE／IG：${esc(v.social)}</span>`:'',
+      url?`<a href="${esc(url)}" target="_blank" rel="noopener">${esc(host(url)||'網站')}</a>`:''
     ].join('');
     const m2=[v.quote?`<span>報價 ${money(v.quote)}</span>`:'',v.deposit?`<span>已付訂金 ${money(v.deposit)}</span>`:''].join('');
     return `<div class="vcard ${v.status==='不考慮'?'muted':''}" role="button" tabindex="0" data-edit="vendors:${esc(v.id)}">
       <div class="vtop"><b>${esc(v.name)}</b>${v.status?`<span class="tag ${stCls[v.status]||''}">${esc(v.status)}</span>`:''}</div>
       ${v.category?`<div class="tags"><span class="tag cat">${esc(v.category)}</span></div>`:''}
       ${contact?`<div class="contact">${contact}</div>`:''}
-      ${v.location?`<div class="v-loc"><span>地點：${esc(v.location)}</span><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(v.location)}" target="_blank" rel="noopener">地圖</a></div>`:''}
+      ${v.location?`<div class="v-loc"><span>地址：${esc(v.location)}</span><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(v.location)}" target="_blank" rel="noopener">地圖</a></div>`:''}
       ${m2?`<div class="facts num">${m2}</div>`:''}
       ${prosCons(v)}
       ${v.note?`<div class="note">${esc(v.note)}</div>`:''}${thumbsHtml(v,'vendors')}</div>`}).join('');

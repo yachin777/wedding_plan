@@ -22,16 +22,18 @@ const FIELDS={
     {k:'photos',t:'photos',label:'照片'},
     {k:'done',t:'check',label:'已完成',editOnly:1}
   ],
+  // 新增廠商：欄位順序就是畫面上的順序
   vendors:[
     {k:'name',t:'text',label:'廠商名稱',req:1,full:1,max:60,ph:'例如：○○婚宴會館'},
     {k:'category',t:'select',label:'類別',opts:()=>state.opts.categories,addNew:'categories',newLabel:'新增類別'},
     {k:'status',t:'select',label:'狀態',opts:()=>VENDOR_STATUS,noBlank:1},
     {k:'contact',t:'text',label:'聯絡人',max:30},{k:'phone',t:'tel',label:'電話',max:30},
-    {k:'link',t:'text',label:'LINE ID 或網址',full:1,max:200,ph:'https://… 或 LINE ID'},
-    {k:'location',t:'text',label:'廠商地點',full:1,max:120,ph:'地址或店名，例如：台北市信義區松仁路 100 號'},   // 卡片上會出現「地圖」連結
+    {k:'social',t:'text',label:'LINE ID 或 IG 名稱',full:1,max:60,ph:'例如：@weddinghall 或 ig: wedding_studio'},
+    {k:'website',t:'url',label:'網址',full:1,max:300,ph:'https://'},
+    {k:'location',t:'text',label:'地址',full:1,max:120,ph:'例如：台北市信義區松仁路 100 號'},   // 卡片上會出現「地圖」按鈕
+    {k:'quote',t:'number',label:'報價（元）'},{k:'deposit',t:'number',label:'已付訂金（元）'},
     {k:'pros',t:'textarea',label:'優點',ph:'一行寫一點，例如：\n交通方便\n菜色評價好'},
     {k:'cons',t:'textarea',label:'缺點',ph:'一行寫一點，例如：\n停車位少\n週末價格較高'},
-    {k:'quote',t:'number',label:'報價（元）'},{k:'deposit',t:'number',label:'已付訂金（元）'},
     {k:'note',t:'textarea',label:'備註',full:1,ph:'方案內容、付款期限…'},
     {k:'photos',t:'photos',label:'照片'}
   ],
@@ -75,7 +77,8 @@ function fieldHtml(f,v,isEdit){
 // 打開表單。kind = tasks/vendors/articles/settings；item = 要編輯的資料（新增時不傳）；defaults = 新增時的預設值
 function openForm(kind,item,defaults){
   const isEdit=!!item;form={kind,item:item||null,seg:{},delArmed:false,photos:[],removed:[],busy:0};
-  const base=kind==='settings'?state.settings:(item||defaults||{});
+  let base=kind==='settings'?state.settings:(item||defaults||{});
+  if(kind==='vendors')base=normVendor(base);   // 舊資料的「LINE ID 或網址」拆成兩個欄位
   $('formTitle').textContent=TITLES[kind][isEdit?1:0];
   $('formBody').innerHTML=FIELDS[kind].map(f=>fieldHtml(f,base[f.k],isEdit)).join('')+
     (kind==='settings'?settingsExtra():'')+
@@ -149,6 +152,7 @@ $('form').onsubmit=async e=>{
   }
   if(kind==='tasks'&&out.start&&out.end&&out.end<out.start){showErr('結束時間要晚於開始時間');return}
   if(kind==='articles'&&out.url&&!safeUrl(out.url)){showErr('網址請以 http:// 或 https:// 開頭');return}
+  if(kind==='vendors'&&out.website&&!safeUrl(out.website)){if(/^[\w-]+(\.[\w-]+)+/.test(out.website))out.website='https://'+out.website;else{showErr('網址請以 http:// 或 https:// 開頭');return}}
   $('saveBtn').disabled=true;
   try{
     if(optsChanged)await store.saveMeta('options');
@@ -159,6 +163,7 @@ $('form').onsubmit=async e=>{
     }
     const now=new Date().toISOString();
     const obj={...(item||{}),...out,id:item?.id||store.newId(kind),createdAt:item?.createdAt||now,updatedAt:now};
+    if(kind==='vendors')delete obj.link;   // 舊欄位已拆成 social／website
     await store.save(kind,obj);
     for(const p of form.removed)store.removePhoto(p.id).catch(()=>{});
     if(kind==='tasks'&&obj.stage!==state.stage&&state.view==='tasks'){state.stage=obj.stage;remember()}
