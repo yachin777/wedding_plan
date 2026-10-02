@@ -191,3 +191,15 @@
 /* 今天、婚禮日的垂直線 */
 .g-today,.g-wed{position:absolute;top:0;bottom:0;width:2px;background:var(--red);opacity:.7;pointer-events:none;z-index:1}
 .g-wed{background:var(--gold)}
+
+/* ---------- 廠商：地點、優缺點 ---------- */
+.v-loc{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;font-size:13px;color:var(--ink-2)}
+.v-loc span{overflow-wrap:anywhere}
+.v-loc a{font-weight:500;text-decoration:none;border:1px solid color-mix(in srgb,var(--red) 35%,var(--line));border-radius:999px;padding:0 9px;font-size:12px}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:13px}
+.pc ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.pc li{display:flex;gap:5px;align-items:baseline;overflow-wrap:anywhere}
+.pc li b{flex:none;font-weight:700}
+.pc .pro b{color:var(--ok)}
+.pc .con b{color:var(--red)}
+.pc ul:only-child{grid-column:1/-1}

@@ -28,6 +28,9 @@ const FIELDS={
     {k:'status',t:'select',label:'狀態',opts:()=>VENDOR_STATUS,noBlank:1},
     {k:'contact',t:'text',label:'聯絡人',max:30},{k:'phone',t:'tel',label:'電話',max:30},
     {k:'link',t:'text',label:'LINE ID 或網址',full:1,max:200,ph:'https://… 或 LINE ID'},
+    {k:'location',t:'text',label:'廠商地點',full:1,max:120,ph:'地址或店名，例如：台北市信義區松仁路 100 號'},   // 卡片上會出現「地圖」連結
+    {k:'pros',t:'textarea',label:'優點',ph:'一行寫一點，例如：\n交通方便\n菜色評價好'},
+    {k:'cons',t:'textarea',label:'缺點',ph:'一行寫一點，例如：\n停車位少\n週末價格較高'},
     {k:'quote',t:'number',label:'報價（元）'},{k:'deposit',t:'number',label:'已付訂金（元）'},
     {k:'note',t:'textarea',label:'備註',full:1,ph:'方案內容、付款期限…'},
     {k:'photos',t:'photos',label:'照片'}

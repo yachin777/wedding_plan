@@ -3,6 +3,14 @@
 // 「廠商」分頁：廠商統計、狀態篩選、廠商卡片。
 // ==========================================================
 
+// 優點／缺點：每一行顯示成一點，優點綠色＋、缺點紅色－
+function prosCons(v){
+  const list=(txt,cls,sign)=>String(txt||'').split('\n').map(s=>s.trim()).filter(Boolean)
+    .map(s=>`<li class="${cls}"><b aria-hidden="true">${sign}</b>${esc(s)}</li>`).join('');
+  const p=list(v.pros,'pro','＋'),c=list(v.cons,'con','－');
+  if(!p&&!c)return '';
+  return `<div class="pc">${p?`<ul aria-label="優點">${p}</ul>`:''}${c?`<ul aria-label="缺點">${c}</ul>`:''}</div>`;
+}
 // 廠商畫面
 R.vendors=()=>{
   const V=state.vendors,signed=V.filter(v=>v.status==='已簽約');
@@ -23,7 +31,9 @@ R.vendors=()=>{
       <div class="vtop"><b>${esc(v.name)}</b>${v.status?`<span class="tag ${stCls[v.status]||''}">${esc(v.status)}</span>`:''}</div>
       ${v.category?`<div class="tags"><span class="tag cat">${esc(v.category)}</span></div>`:''}
       ${contact?`<div class="contact">${contact}</div>`:''}
+      ${v.location?`<div class="v-loc"><span>地點：${esc(v.location)}</span><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(v.location)}" target="_blank" rel="noopener">地圖</a></div>`:''}
       ${m2?`<div class="facts num">${m2}</div>`:''}
+      ${prosCons(v)}
       ${v.note?`<div class="note">${esc(v.note)}</div>`:''}${thumbsHtml(v,'vendors')}</div>`}).join('');
   const chip=(f,l)=>`<button class="chip" type="button" data-vf="${f}" aria-pressed="${state.vfilter===f}">${l}</button>`;
   return `<div class="view-h"><h2>廠商</h2><span>${V.length} 家</span></div>
