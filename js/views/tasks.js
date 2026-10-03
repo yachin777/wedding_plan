@@ -1,6 +1,6 @@
 // ==========================================================
 // js/views/tasks.js
-// 「任務」分頁：三階段卡片、統計、篩選、任務清單。
+// 「任務」分頁：四個階段卡片、統計、篩選、任務清單。
 // ==========================================================
 
 // 任務畫面
@@ -9,6 +9,7 @@ R.tasks=()=>{
     const st=stats(state.tasks.filter(t=>t.stage===s.id));
     return `<button class="stage num" type="button" role="tab" data-stage="${s.id}" aria-selected="${s.id===state.stage}">
       <span class="step">${s.step}</span><span class="name">${s.name}</span>
+      ${state.settings[s.dateKey]?`<span class="sdate">${fmtDate(state.settings[s.dateKey])}</span>`:''}
       <span class="pct">${st.pct}<small>%</small></span>
       <span class="bar"><i style="width:${st.pct}%"></i></span>
       <span class="meta"><span>完成 ${st.done}/${st.total}</span><span class="od ${st.overdue?'':'zero'}">逾期 ${st.overdue}</span></span>

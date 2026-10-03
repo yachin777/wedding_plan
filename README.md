@@ -60,3 +60,6 @@ wedding_plan/
 - 新增 JS 檔案時，要在 `index.html` 加一行 `<script src="...">`，放在 `main.js` 前面。
 - 上傳後網站最多要等約 10 分鐘才會更新，可以按 `Ctrl + F5` 強制重新整理。
 - 兩台電腦輪流修改時，開始改之前先雙擊一次 `upload.bat` 同步。
+
+## 階段
+目前有四個階段：提親 → 登記 → 訂婚 → 婚禮。階段的名稱、順序、對應日期在 `js/constants.js` 的 `STAGES`；各階段日期在右上角／側邊欄的「婚禮設定」填寫；甘特圖與重要日子的顏色在 `js/views/gantt.js` 的 `GANTT_COLORS`。

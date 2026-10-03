@@ -5,7 +5,13 @@
 // ==========================================================
 
 // 三個階段：id 是存在資料庫的代碼（不要改），name 是畫面上顯示的名稱
-const STAGES=[{id:'proposal',name:'提親',step:'STEP 1'},{id:'engagement',name:'訂婚',step:'STEP 2'},{id:'wedding',name:'婚禮',step:'STEP 3'}];
+// dateKey = 這個階段的日子存在婚禮設定的哪個欄位；mark = 月曆上標在日期格的字
+const STAGES=[
+  {id:'proposal',    name:'提親',step:'STEP 1',dateKey:'proposalDate',    mark:'提'},
+  {id:'registration',name:'登記',step:'STEP 2',dateKey:'registrationDate',mark:'登'},
+  {id:'engagement',  name:'訂婚',step:'STEP 3',dateKey:'engagementDate',  mark:'訂'},
+  {id:'wedding',     name:'婚禮',step:'STEP 4',dateKey:'weddingDate',     mark:'囍'}
+];
 // 「急迫性」下拉選單的選項
 const URGENCY=['非常緊急','緊急','一般','不急'];
 // 「優先等級」下拉選單的選項
@@ -20,7 +26,7 @@ const DEFAULT_OPTS={
   people:['新郎','新娘','新人一起','男方家長','女方家長','媒人','婚顧']
 };
 // 婚禮設定的預設值：婚禮日期、總預算、新郎、新娘
-const DEFAULT_SETTINGS={weddingDate:'',budget:0,groom:'',bride:''};
+const DEFAULT_SETTINGS={proposalDate:'',registrationDate:'',engagementDate:'',weddingDate:'',budget:0,groom:'',bride:''};
 // 下拉選單中「＋新增…」選項的內部代碼
 const NEW='__new__';
 // 每筆資料最多可放幾張照片

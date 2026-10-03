@@ -33,3 +33,8 @@ const stageName=id=>STAGES.find(s=>s.id===id)?.name||'';
 const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'';
 // 從網址取出網站名稱，例如 www.facebook.com → facebook.com
 const host=u=>{try{return new URL(u).hostname.replace(/^www\./,'')}catch{return''}};
+
+// 四個階段的重要日子（只列出有設定日期的），例如 [{id:'proposal',name:'提親',mark:'提',date:'2026-10-11'}, …]
+const milestones=()=>STAGES.map(s=>({...s,date:state.settings[s.dateKey]||''})).filter(s=>s.date);
+// 某一天是哪些階段的日子
+const milestonesOn=d=>milestones().filter(m=>m.date===d);

@@ -16,9 +16,11 @@ function ganttSpan(t){
 }
 
 // 三個階段在圖上的顏色（圖例會一起顯示）
-const GANTT_COLORS={proposal:'#FFE153',engagement:'#0080FF',wedding:'var(--red)'};
+const GANTT_COLORS={proposal:'#FFE153',registration:'#2E9E6A',engagement:'#0080FF',wedding:'var(--red)'};
 // 長條上日期文字的顏色：淺色長條（例如黃色）用深色字，深色長條用白字，才看得清楚
-const GANTT_TEXT={proposal:'#2A1F23',engagement:'#FFFFFF',wedding:'#FFFFFF'};
+const GANTT_TEXT={proposal:'#2A1F23',registration:'#FFFFFF',engagement:'#FFFFFF',wedding:'#FFFFFF'};
+// 其他畫面（總覽的重要日子）也用同一組階段顏色
+const STAGE_COLORS=GANTT_COLORS;
 
 R.gantt=()=>{
   const g=state.gantt,t0=todayStr();
@@ -88,11 +90,12 @@ R.gantt=()=>{
   }
   // 背景格線：天數少畫每天，多的話畫每週
   const gridStep=dw>=12?dw:dw*7;
-  // 今天（紅線）與婚禮日（金線）：畫在日期軸與每一列裡
+  // 今天（紅色細線）與四個階段的日子（各階段顏色的虛線）：畫在日期軸與每一列裡
   const todayLine=(t0>=min&&t0<=max)?`<span class="g-today" style="left:${x(t0)+dw/2}px" title="今天"></span>`:'';
-  const wd=state.settings.weddingDate;
-  const wedLine=(wd&&wd>=min&&wd<=max)?`<span class="g-wed" style="left:${x(wd)+dw/2}px" title="婚禮日 ${fmtDate(wd)}"></span>`:'';
-  const lines=todayLine+wedLine;
+  const msIn=milestones().filter(m=>m.date>=min&&m.date<=max);
+  const msLines=msIn.map(m=>`<span class="g-ms" style="left:${x(m.date)+dw/2}px;--c:${GANTT_COLORS[m.id]}" title="${m.name}日 ${fmtDate(m.date)}"></span>`).join('');
+  const msLabels=msIn.map(m=>`<span class="g-ms-label" style="left:${x(m.date)+dw/2}px;--c:${GANTT_COLORS[m.id]};--t:${GANTT_TEXT[m.id]}">${m.mark}</span>`).join('');
+  const lines=todayLine+msLines;
 
   // ---------- 6. 每一列任務 ----------
   let lastCat=null;
@@ -117,13 +120,13 @@ R.gantt=()=>{
 
   const legend=`<div class="legend g-legend">${STAGES.map(s=>`<span><i class="g-key" style="background:${GANTT_COLORS[s.id]}"></i>${s.name}</span>`).join('')}
     <span><i class="g-key done"></i>已完成</span><span><i class="g-key late"></i>逾期（紅框）</span>
-    <span><i class="g-key today"></i>今天</span>${wedLine?'<span><i class="g-key wed"></i>婚禮日</span>':''}</div>`;
+    <span><i class="g-key today"></i>今天</span>${msIn.length?'<span><i class="g-key ms"></i>各階段的日子（虛線）</span>':''}</div>`;
 
   return head+controls+legend+`
     <div class="g-scroll">
       <div class="gantt" style="--dw:${dw}px;--gs:${gridStep}px;grid-template-columns:var(--g-name-w) ${W}px">
         <div class="g-corner">任務</div>
-        <div class="g-axis">${lines}${months}<div class="g-ticks">${ticks}</div></div>
+        <div class="g-axis">${lines}${msLabels}${months}<div class="g-ticks">${ticks}</div></div>
         ${body}
       </div>
     </div>

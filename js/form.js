@@ -45,7 +45,9 @@ const FIELDS={
     {k:'photos',t:'photos',label:'照片'}
   ],
   settings:[
-    {k:'weddingDate',t:'date',label:'婚禮日期',full:1},
+    // 四個階段的日子：會顯示在總覽、月曆、任務頁與甘特圖
+    {k:'proposalDate',t:'date',label:'提親日期'},{k:'registrationDate',t:'date',label:'登記日期'},
+    {k:'engagementDate',t:'date',label:'訂婚日期'},{k:'weddingDate',t:'date',label:'婚禮日期'},
     {k:'groom',t:'text',label:'新郎',max:20},{k:'bride',t:'text',label:'新娘',max:20},
     {k:'budget',t:'number',label:'總預算（元）',full:1}
   ]

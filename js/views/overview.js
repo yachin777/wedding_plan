@@ -1,6 +1,6 @@
 // ==========================================================
 // js/views/overview.js
-// 「總覽」分頁：婚禮倒數、三階段進度、逾期、未來 14 天、預算與廠商摘要。
+// 「總覽」分頁：婚禮倒數、各階段進度、逾期、未來 14 天、預算與廠商摘要。
 // ==========================================================
 
 // 總覽畫面
@@ -16,6 +16,13 @@ R.overview=()=>{
   }else{
     hero=`<section class="hero unset"><div><b style="font-family:var(--serif);font-size:18px">還沒設定婚禮日期</b><div style="font-size:13px;color:var(--ink-2)">設定後這裡會顯示倒數天數</div></div><button class="btn primary" type="button" data-action="settings">設定</button></section>`;
   }
+  // 四個階段的重要日子（點一下可以到婚禮設定修改）
+  const days=`<div class="m-days">${STAGES.map(st=>{const d=state.settings[st.dateKey];
+    const n=d?dayDiff(d,t):null;
+    return `<button class="m-day" type="button" data-action="settings" style="--c:${STAGE_COLORS[st.id]}">
+      <span class="m-name">${st.name}</span>
+      <b class="num">${d?fmtDate(d):'未設定'}</b>
+      <span class="num">${d?(n>0?`還有 ${n} 天`:n===0?'就是今天':'已完成'):'點此設定日期'}</span></button>`}).join('')}</div>`;
   const stageRows=STAGES.map(st=>{const x=stats(state.tasks.filter(k=>k.stage===st.id));
     return `<button class="srow" type="button" data-goto-stage="${st.id}"><span class="n">${st.name}</span>
       <span class="bar"><i style="width:${x.pct}%"></i></span>
@@ -29,8 +36,9 @@ R.overview=()=>{
   const b=+s.budget||0;
   const signed=state.vendors.filter(v=>v.status==='已簽約').length,asking=state.vendors.filter(v=>v.status==='詢價中').length;
   return `<div class="view-h"><h2>總覽</h2></div>${hero}
+    ${days}
     <div class="ov-cols"><div>
-    <div class="sec-h">三階段進度<button class="link" type="button" data-nav="tasks">看全部任務</button></div>
+    <div class="sec-h">各階段進度<button class="link" type="button" data-nav="tasks">看全部任務</button></div>
     <div class="stage-rows">${stageRows}</div>
     <div class="sec-h">預算與廠商</div>
     <div class="mini">
