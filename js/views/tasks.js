@@ -3,6 +3,10 @@
 // 「任務」分頁：四個階段卡片、統計、篩選、任務清單。
 // ==========================================================
 
+// 階段卡片右邊的日期：上面「10/20」、下面「(二)」
+function stageDateHtml(d){
+  return `<span class="sdate num"><b>${fmtShort(d)}</b><span>(${WD[new Date(d+'T00:00:00').getDay()]})</span></span>`;
+}
 // 任務畫面
 R.tasks=()=>{
   const stageCards=STAGES.map(s=>{
@@ -12,7 +16,7 @@ R.tasks=()=>{
       <span class="s-head">
         <span class="name">${s.name}</span>
         <span class="pct">${st.pct}<small>%</small></span>
-        ${state.settings[s.dateKey]?`<span class="sdate">${fmtDate(state.settings[s.dateKey])}</span>`:''}
+        ${state.settings[s.dateKey]?stageDateHtml(state.settings[s.dateKey]):''}
       </span>
       <span class="bar"><i style="width:${st.pct}%"></i></span>
       <span class="meta"><span>完成 ${st.done}/${st.total}</span><span class="od ${st.overdue?'':'zero'}">逾期 ${st.overdue}</span></span>
