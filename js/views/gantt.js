@@ -16,7 +16,9 @@ function ganttSpan(t){
 }
 
 // 三個階段在圖上的顏色（圖例會一起顯示）
-const GANTT_COLORS={proposal:'#E0A458',engagement:'var(--g-mid)',wedding:'var(--red)'};
+const GANTT_COLORS={proposal:'#FFFF37',engagement:'#0080FF',wedding:'var(--red)'};
+// 長條上日期文字的顏色：淺色長條（例如黃色）用深色字，深色長條用白字，才看得清楚
+const GANTT_TEXT={proposal:'#2A1F23',engagement:'#FFFFFF',wedding:'#FFFFFF'};
 
 R.gantt=()=>{
   const g=state.gantt,t0=todayStr();
@@ -109,7 +111,7 @@ R.gantt=()=>{
         <i class="g-dot" style="background:${GANTT_COLORS[t.stage]||'var(--ink-3)'}"></i><span>${esc(t.item)}</span></button>
       <div class="g-track">${lines}
         <button type="button" class="g-bar ${t.done?'done':''} ${late?'late':''}" data-edit="tasks:${esc(t.id)}" title="${esc(tip)}"
-          style="left:${left}px;width:${Math.max(width,dw)}px;--c:${GANTT_COLORS[t.stage]||'var(--ink-3)'}">${width>=70?`<span>${fmtShort(sp.s)}–${fmtShort(sp.e)}</span>`:''}</button>
+          style="left:${left}px;width:${Math.max(width,dw)}px;--c:${GANTT_COLORS[t.stage]||'var(--ink-3)'};--t:${GANTT_TEXT[t.stage]||'#fff'}">${width>=70?`<span>${fmtShort(sp.s)}–${fmtShort(sp.e)}</span>`:''}</button>
       </div>`;
   }).join('');
 
