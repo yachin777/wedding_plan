@@ -16,7 +16,7 @@ function ganttSpan(t){
 }
 
 // 三個階段在圖上的顏色（圖例會一起顯示）
-const GANTT_COLORS={proposal:'var(--gold)',engagement:'var(--g-mid)',wedding:'var(--red)'};
+const GANTT_COLORS={proposal:'#E0A458',engagement:'var(--g-mid)',wedding:'var(--red)'};
 
 R.gantt=()=>{
   const g=state.gantt,t0=todayStr();
