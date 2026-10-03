@@ -16,7 +16,7 @@ function ganttSpan(t){
 }
 
 // 三個階段在圖上的顏色（圖例會一起顯示）
-const GANTT_COLORS={proposal:'#FFD306',engagement:'#0080FF',wedding:'var(--red)'};
+const GANTT_COLORS={proposal:'#FFE153',engagement:'#0080FF',wedding:'var(--red)'};
 // 長條上日期文字的顏色：淺色長條（例如黃色）用深色字，深色長條用白字，才看得清楚
 const GANTT_TEXT={proposal:'#2A1F23',engagement:'#FFFFFF',wedding:'#FFFFFF'};
 
