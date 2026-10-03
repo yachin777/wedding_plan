@@ -7,10 +7,23 @@
 .fab{position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:7;border:0;background:var(--red);color:#fff;border-radius:999px;padding:12px 18px 12px 14px;font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px;box-shadow:0 6px 20px color-mix(in srgb,var(--red) 40%,transparent)}
 .fab svg{width:20px;height:20px}
 
-/* sheet */
+/* sheet：新增項目／新增廠商／婚禮設定等彈出視窗，大小會跟著視窗寬度變動
+   手機（< 700px）：從下方滑出、佔滿寬度，欄位兩欄
+   平板／小視窗（700～1099px）：置中，寬度約為畫面的 90%（最寬 760px），欄位兩欄
+   大螢幕（≥ 1100px）：置中，寬度約為畫面的 80%（最寬 1100px），欄位四欄 */
 .scrim{position:fixed;inset:0;background:rgba(20,8,12,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
-.sheet{background:var(--bg);width:100%;max-width:640px;max-height:92vh;max-height:92dvh;border-radius:16px 16px 0 0;display:flex;flex-direction:column;box-shadow:var(--shadow)}
-@media (min-width:700px){.scrim{align-items:center}.sheet{border-radius:16px;max-height:88vh}}
+.sheet{background:var(--bg);width:100%;max-height:92vh;max-height:92dvh;border-radius:16px 16px 0 0;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+@media (min-width:700px){
+  .scrim{align-items:center;padding:24px}
+  .sheet{width:min(90vw,760px);border-radius:16px;max-height:90vh;max-height:90dvh}
+}
+/* 電腦版有側邊欄：視窗改在右邊內容區置中 */
+@media (min-width:900px){.scrim{padding-left:calc(var(--side) + 24px)}}
+@media (min-width:1100px){
+  .sheet{width:min(80vw - var(--side),1100px)}
+  .sheet-b{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px 16px}
+  .sheet-b .f:has(textarea):not(.full){grid-column:span 2}   /* 優點、缺點這類多行欄位各佔半寬 */
+}
 .sheet-h{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--line)}
 .sheet-h h2{margin:0;font-family:var(--serif);font-size:18px}
 .x{margin-left:auto;border:0;background:var(--surface-2);border-radius:50%;width:32px;height:32px;display:grid;place-items:center;font-size:18px;line-height:1;color:var(--ink-2)}
